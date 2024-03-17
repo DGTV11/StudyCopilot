@@ -8,7 +8,7 @@
 1) Install Python 3.12.0 (https://www.python.org)
 2) Install ollama (https://ollama.com)
 
-3) CD into the StudyCopilot
+3) Cd into the StudyCopilot directory
 
 4) Install required Python libraries and backages
 ```sh
