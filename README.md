@@ -1,8 +1,8 @@
 # Study Copilot
 
 ## Requirements
-At least 8GB of RAM
-At least 5GB of free storage (just for the models)
+- At least 8GB of RAM
+- At least 5GB of free storage (just for the models)
 
 ## Installation
 1) Install Python 3.12.0 (https://www.python.org)
@@ -20,7 +20,7 @@ pip install -r requirements.txt
 ollama pull mistral
 ollama pull nomic-embed-text
 ```
-note: nomic-embed-text isn't being used yet so there is no need to pull it for now.
+Note: nomic-embed-text isn't being used yet so there is no need to pull it for now.
 
 ## Usage
 1) Run the program
