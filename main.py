@@ -53,7 +53,7 @@ if __name__ == '__main__':
 			print('Creating flashcards_helper from Modelfile...')
 			ollama.create(model='flashcards_helper', modelfile=file.read())	
 
-	with gr.Blocks(theme=gr.themes.Default(primary_hue="red")) as studyCopilot:
+	with gr.Blocks(theme=gr.themes.Default(primary_hue="red", secondary_hue="blue")) as studyCopilot:
 		gr.Markdown(
 		"""
 		# Study Copilot
