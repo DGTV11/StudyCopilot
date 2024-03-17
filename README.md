@@ -1,4 +1,5 @@
-# Study Copilot
+Study Copilot
+=============
 
 ## Requirements
 - At least 8GB of RAM
