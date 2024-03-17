@@ -8,6 +8,7 @@ def gen_flashcards(filepaths, notes):
 	global fh_is_regenerating
 	if fh_is_regenerating:
 		gr.Error('Please wait until flashcards_helper model is ready.')
+		raise StopIteration
 
 	pptx_files_notes = ''
 	if filepaths:
