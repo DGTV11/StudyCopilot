@@ -2,7 +2,13 @@ import gradio as gr
 import ollama, os
 from pptx import Presentation
 
+fh_is_regenerating = False
+
 def gen_flashcards(filepaths, notes):
+	global fh_is_regenerating
+	if fh_is_regenerating:
+		gr.Error('Please wait until flashcards_helper model is ready.')
+
 	pptx_files_notes = ''
 	if filepaths:
 		len_filepaths = len(filepaths)
@@ -29,9 +35,16 @@ def gen_flashcards(filepaths, notes):
 		yield res_stream
 
 def regen_flashcards_helper():
+	global fh_is_regenerating
+
+	fh_is_regenerating = True
+	gr.Info('Regenerating flashcards_helper from Modelfile...')
+
 	with open(os.path.join(os.path.dirname(__file__), 'Modelfile')) as file:
-		gr.Info('Regenerating flashcards_helper from Modelfile...')
 		ollama.create(model='flashcards_helper', modelfile=file.read())
+
+	fh_is_regenerating = False
+	gr.Info('Finished regenerating!')
 
 if __name__ == '__main__':
 	print('Checking if flashcards_helper model exists...')
