@@ -1,2 +1,1 @@
-# StudyCopilot
-## An assistant for revision
+# Study Copilot
