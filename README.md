@@ -9,19 +9,20 @@ Study Copilot
 1) Install Python 3.12.0 (https://www.python.org)
 2) Install ollama (https://ollama.com)
 
-3) Cd into the StudyCopilot directory
+3) Clone this repository
 
-4) Install required Python libraries and backages
+4) Cd into the StudyCopilot directory
+
+5) Install required Python libraries and backages
 ```sh
 pip install -r requirements.txt
 ```
 
-5) Install the mistral and nomic-embed-text models
+6) Install the mistral and nomic-embed-text models
 ```sh
 ollama pull mistral
 ollama pull nomic-embed-text
 ```
-Note: nomic-embed-text isn't being used yet so there is no need to pull it for now.
 
 ## Usage
 1) Run the program
