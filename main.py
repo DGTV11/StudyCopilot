@@ -8,32 +8,35 @@ def gen_flashcards(filepaths, notes):
 	global fh_is_regenerating
 	if fh_is_regenerating:
 		gr.Error('Please wait until flashcards_helper model is ready.')
-		raise StopIteration
+		yield ''
+	elif (not filepaths) and (not notes):
+		gr.Error('Please provide at least one file and/or text.')
+		yield ''
+	else:
+		pptx_files_notes = ''
+		if filepaths:
+			len_filepaths = len(filepaths)
+			for i, filepath in enumerate(filepaths, start=1):
+				pptx_files_notes += os.path.basename(filepath).split('.')[0] + '\n'
+				slides = Presentation(filepath).slides
+				gr.Info(f'Grabbing text from slideshow {i}/{len_filepaths} ({len(slides)} slides)...')
+				for slide in slides:
+					for shape in slide.shapes:
+						if hasattr(shape, 'text'):
+							pptx_files_notes += shape.text + '\n'
 
-	pptx_files_notes = ''
-	if filepaths:
-		len_filepaths = len(filepaths)
-		for i, filepath in enumerate(filepaths, start=1):
-			pptx_files_notes += os.path.basename(filepath).split('.')[0] + '\n'
-			slides = Presentation(filepath).slides
-			gr.Info(f'Grabbing text from slideshow {i}/{len_filepaths} ({len(slides)} slides)...')
-			for slide in slides:
-				for shape in slide.shapes:
-					if hasattr(shape, 'text'):
-						pptx_files_notes += shape.text + '\n'
+		gr.Info('Reading files and notes...')
+		stream = ollama.chat(
+				model='flashcards_helper',
+				messages=[{'role': 'user', 'content': f'Text: {pptx_files_notes + notes}\n\nA deck of flashcards:'}],
+				stream=True,
+		)
+		res_stream = ''
 
-	gr.Info('Reading slide texts and notes...')
-	stream = ollama.chat(
-			model='flashcards_helper',
-			messages=[{'role': 'user', 'content': f'Text: {pptx_files_notes + notes}\n\nA deck of flashcards:'}],
-			stream=True,
-	)
-	res_stream = ''
-
-	gr.Info('Generating flashcards...')
-	for chunk in stream:
-		res_stream += chunk['message']['content']
-		yield res_stream
+		gr.Info('Generating flashcards...')
+		for chunk in stream:
+			res_stream += chunk['message']['content']
+			yield res_stream
 
 def regen_flashcards_helper():
 	global fh_is_regenerating
