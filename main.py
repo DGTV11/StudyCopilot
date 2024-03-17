@@ -4,29 +4,30 @@ from pptx import Presentation
 
 fh_is_regenerating = False
 
-def gen_flashcards(filepaths, notes):
+def gen_flashcards(slides_filepaths, notes):
 	global fh_is_regenerating
 	if fh_is_regenerating:
 		raise gr.Error('Please wait until flashcards_helper model is ready.')
-	elif (not filepaths) and (not notes):
+	elif (not slides_filepaths) and (not notes):
 		raise gr.Error('Please provide at least one file and/or text.')
 	else:
-		pptx_files_notes = ''
-		if filepaths:
-			len_filepaths = len(filepaths)
-			for i, filepath in enumerate(filepaths, start=1):
-				pptx_files_notes += os.path.basename(filepath).split('.')[0] + '\n'
+		slides_notes = ''
+
+		if slides_filepaths:
+			len_filepaths = len(slides_filepaths)
+			for i, filepath in enumerate(slides_filepaths, start=1):
+				slides_notes += os.path.basename(filepath).split('.')[0] + '\n'
 				slides = Presentation(filepath).slides
 				gr.Info(f'Grabbing text from slideshow {i}/{len_filepaths} ({len(slides)} slides)...')
 				for slide in slides:
 					for shape in slide.shapes:
 						if hasattr(shape, 'text'):
-							pptx_files_notes += shape.text + '\n'
+							slides_notes += shape.text + '\n'
 
-		gr.Info('Reading files and notes...')
+		gr.Info('Reading files and text...')
 		stream = ollama.chat(
 				model='flashcards_helper',
-				messages=[{'role': 'user', 'content': f'Text: {pptx_files_notes + notes}\n\nA deck of flashcards:'}],
+				messages=[{'role': 'user', 'content': f'Text: {slides_notes + notes}\n\nA deck of flashcards:'}],
 				stream=True,
 		)
 		res_stream = ''
@@ -62,7 +63,7 @@ if __name__ == '__main__':
 		""")
 
 		with gr.Tab('Flashcard Generator'):
-			inp_cards_slides = gr.File(label="Slides:", file_count='multiple', file_types=['.pptx'])	
+			inp_cards_slides = gr.File(label="Slides:", file_count='multiple', file_types=['.pptx'])
 			inp_cards_words = gr.Textbox(label="Notes:")
 
 			with gr.Row():
