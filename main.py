@@ -51,13 +51,6 @@ with gr.Blocks(theme=gr.themes.Default(primary_hue="red")) as studyCopilot:
 		stop = gr.Button(value="Stop", variant='primary')
 		out_cards = gr.Markdown(label="A deck of flashcards:")
 		clear_cards_btn = gr.ClearButton(components=[out_cards])
-	with gr.Tab('Credits'):
-		gr.Markdown(
-		'''
-		1) https://mattmazur.com/2023/12/14/running-mistral-7b-instruct-on-a-macbook/ for the suggestion of using Ollama
-		2) https://www.reddit.com/r/Anki/comments/11cgw1j/casting_a_spell_on_chatgpt_let_it_write_anki/ for system prompt of flashcards_helper
-		3) https://youtu.be/jENqvjpkwmw?si=n_nOXS_CLallmsfb and https://mer.vin/2024/02/ollama-embedding/ for the UI suggestion and RAG idea
-		''')
 
 	gen_cards_event = generate_cards_btn.click(fn=gen_flashcards, inputs=[inp_cards_slides, inp_cards_words], outputs=[out_cards])
 	stop.click(fn=None, inputs=None, outputs=None, cancels=[gen_cards_event])
