@@ -24,6 +24,7 @@ def gen_flashcards(slides_filepaths, notes):
 						if hasattr(shape, 'text'):
 							slides_notes += shape.text + '\n'
 
+		gr.Info('Sending files and text to flashcards_helper...')
 		stream = ollama.chat(
 				model='flashcards_helper',
 				messages=[{'role': 'user', 'content': f'Text: {slides_notes + notes}\n\nA deck of flashcards:'}],
