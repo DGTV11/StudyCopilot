@@ -1,60 +1,28 @@
 import gradio as gr
-import ollama, os
-from pptx import Presentation
+import ollama
+
+import modules.model_regen_helper as mrh
+import modules.generate_flashcards as gen
 
 fh_is_regenerating = False
 
-def gen_flashcards(slides_filepaths, notes):
-	global fh_is_regenerating
-	if fh_is_regenerating:
-		raise gr.Error('Please wait until flashcards_helper model is ready.')
-	elif (not slides_filepaths) and (not notes):
-		raise gr.Error('Please provide at least one file and/or text.')
-	else:
-		slides_notes = ''
-
-		if slides_filepaths:
-			len_filepaths = len(slides_filepaths)
-			for i, filepath in enumerate(slides_filepaths, start=1):
-				slides_notes += os.path.basename(filepath).split('.')[0] + '\n'
-				slides = Presentation(filepath).slides
-				gr.Info(f'Grabbing text from slideshow {i}/{len_filepaths} ({len(slides)} slides)...')
-				for slide in slides:
-					for shape in slide.shapes:
-						if hasattr(shape, 'text'):
-							slides_notes += shape.text + '\n'
-
-		gr.Info('Sending files and text to flashcards_helper...')
-		stream = ollama.chat(
-				model='flashcards_helper',
-				messages=[{'role': 'user', 'content': f'Text: {slides_notes + notes}\n\nA deck of flashcards:'}],
-				stream=True,
-		)
-		res_stream = ''
-
-		gr.Info('Generating flashcards...')
-		for chunk in stream:
-			res_stream += chunk['message']['content']
-			yield res_stream
-
 def regen_flashcards_helper():
 	global fh_is_regenerating
-
+	
 	fh_is_regenerating = True
-	gr.Info('Regenerating flashcards_helper from Flashcards_Modelfile...')
 
-	with open(os.path.join(os.path.dirname(__file__), 'Flashcards_Modelfile')) as file:
-		ollama.create(model='flashcards_helper', modelfile=file.read())
-
+	mrh.gen_model_from_modelfile('flashcards_helper', 
+							  	__file__, 
+							  	lambda: gr.Info('Creating flashcards_helper...'), 
+							  	lambda: gr.Info('Finished!')
+							  )
+	
 	fh_is_regenerating = False
-	gr.Info('Finished regenerating!')
 
 if __name__ == '__main__':
 	print('Checking if flashcards_helper model exists...')
 	if 'flashcards_helper:latest' not in [model['name'] for model in ollama.list()['models']]:
-		with open(os.path.join(os.path.dirname(__file__), 'Flashcards_Modelfile')) as file:
-			print('Creating flashcards_helper from Flashcards_Modelfile...')
-			ollama.create(model='flashcards_helper', modelfile=file.read())	
+		mrh.gen_model_from_modelfile('flashcards_helper', __file__, print('Creating flashcards_helper...'), print('Finished!'))	
 
 	with gr.Blocks(theme=gr.themes.Default(primary_hue="red"), analytics_enabled=False, title="Study Copilot") as studyCopilot:
 		gr.Markdown(
@@ -74,9 +42,11 @@ if __name__ == '__main__':
 			out_cards = gr.Markdown(label="A deck of flashcards:")
 			clear_cards_btn = gr.ClearButton(components=[out_cards])
 			regen_flashcards_helper_btn = gr.Button(value="Regenerate flashcards_helper", variant='secondary')
+		with gr.Tab('Web Auto-Surfer'):
+			pass
 
 		regen_flashcards_helper_btn.click(fn=regen_flashcards_helper, inputs=[], outputs=[])
-		gen_cards_event = generate_cards_btn.click(fn=gen_flashcards, inputs=[inp_cards_slides, inp_cards_words], outputs=[out_cards])
+		gen_cards_event = generate_cards_btn.click(fn=gen.gen_flashcards, inputs=[inp_cards_slides, inp_cards_words], outputs=[out_cards])
 		stop.click(fn=None, inputs=None, outputs=None, cancels=[gen_cards_event])
 
 	print('Launching...')
