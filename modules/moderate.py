@@ -8,8 +8,8 @@ def moderate(prompt, raise_error_if_moderated=True) -> None:
         stream=False,
     )
 
-    if 'not moderated' in response:
+    if 'not moderated' in response.lower():
         return None
     if raise_error_if_moderated:
-        raise gr.Error('Content moderated!')
-    gr.Warning('Content moderated! Read at your own risk!')
+        raise gr.Error(f'Content moderated! Reason: \'{response}\'')
+    gr.Warning(f'Content moderated! Read at your own risk! Reason: \'{response}\'')
