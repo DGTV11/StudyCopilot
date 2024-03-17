@@ -41,7 +41,7 @@ with gr.Blocks(theme=gr.themes.Default(primary_hue="red")) as studyCopilot:
 	""")
 
 	with gr.Tab('Flashcard Generator'):
-		inp_cards_slides = gr.File(file_count='multiple', file_types=['.pptx'])	
+		inp_cards_slides = gr.File(label="Slides:", file_count='multiple', file_types=['.pptx'])	
 		inp_cards_words = gr.Textbox(label="Notes:")
 
 		with gr.Row():
