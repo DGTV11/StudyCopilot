@@ -41,9 +41,9 @@ def regen_flashcards_helper():
 	global fh_is_regenerating
 
 	fh_is_regenerating = True
-	gr.Info('Regenerating flashcards_helper from Modelfile...')
+	gr.Info('Regenerating flashcards_helper from Flashcards_Modelfile...')
 
-	with open(os.path.join(os.path.dirname(__file__), 'Modelfile')) as file:
+	with open(os.path.join(os.path.dirname(__file__), 'Flashcards_Modelfile')) as file:
 		ollama.create(model='flashcards_helper', modelfile=file.read())
 
 	fh_is_regenerating = False
@@ -52,8 +52,8 @@ def regen_flashcards_helper():
 if __name__ == '__main__':
 	print('Checking if flashcards_helper model exists...')
 	if 'flashcards_helper:latest' not in [model['name'] for model in ollama.list()['models']]:
-		with open(os.path.join(os.path.dirname(__file__), 'Modelfile')) as file:
-			print('Creating flashcards_helper from Modelfile...')
+		with open(os.path.join(os.path.dirname(__file__), 'Flashcards_Modelfile')) as file:
+			print('Creating flashcards_helper from Flashcards_Modelfile...')
 			ollama.create(model='flashcards_helper', modelfile=file.read())	
 
 	with gr.Blocks(theme=gr.themes.Default(primary_hue="red"), analytics_enabled=False, title="Study Copilot") as studyCopilot:
