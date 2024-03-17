@@ -3,10 +3,7 @@ import ollama, os
 from pptx import Presentation
 
 def gen_flashcards(slides_filepaths, notes):
-	global fh_is_regenerating
-	if fh_is_regenerating:
-		raise gr.Error('Please wait until flashcards_helper model is ready.')
-	elif (not slides_filepaths) and (not notes):
+	if (not slides_filepaths) and (not notes):
 		raise gr.Error('Please provide at least one file and/or text.')
 	else:
 		slides_notes = ''
