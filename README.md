@@ -25,7 +25,7 @@ Note: nomic-embed-text isn't being used yet so there is no need to pull it for n
 ## Usage
 1) Run the program
 ```sh
-python3 run main.py
+python3 main.py
 ```
 
 2) Wait for it to show something like
