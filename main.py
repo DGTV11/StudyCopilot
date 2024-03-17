@@ -7,11 +7,9 @@ fh_is_regenerating = False
 def gen_flashcards(filepaths, notes):
 	global fh_is_regenerating
 	if fh_is_regenerating:
-		gr.Error('Please wait until flashcards_helper model is ready.')
-		yield ''
+		raise gr.Error('Please wait until flashcards_helper model is ready.')
 	elif (not filepaths) and (not notes):
-		gr.Error('Please provide at least one file and/or text.')
-		yield ''
+		raise gr.Error('Please provide at least one file and/or text.')
 	else:
 		pptx_files_notes = ''
 		if filepaths:
