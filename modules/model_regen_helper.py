@@ -1,4 +1,6 @@
-import ollama, os
+import os
+
+import ollama
 import gradio as gr
 
 def gen_model_from_modelfile(name, base_path, start_function: callable=lambda: None, end_function: callable=lambda: None):

@@ -1,5 +1,7 @@
+import os
+
+import ollama
 import gradio as gr
-import ollama, os
 from pptx import Presentation
 
 def gen_flashcards(slides_filepaths, notes):
