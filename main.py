@@ -1,5 +1,7 @@
+import os
+
+import ollama
 import gradio as gr
-import ollama, os
 
 import modules.model_regen_helper as mrh
 import modules.generate_flashcards as gen
@@ -10,13 +12,17 @@ if __name__ == '__main__':
 		if file[0] in ['.', '_']:
 			continue
 		if f'{file}:latest' not in [model['name'] for model in ollama.list()['models']]:
-			mrh.gen_model_from_modelfile(f'{file}', __file__, print(f'Creating the \'{file}\' model...'), print(f'\'{file}\' model created!'))	
-
+			mrh.gen_model_from_modelfile(f'{file}', 
+                                        __file__, 
+                                        lambda: print(f'Creating the \'{file}\' model...'), 
+                                        lambda: print(f'\'{file}\' model created!')
+                                        )
+    
 	with gr.Blocks(theme=gr.themes.Default(primary_hue="red"), analytics_enabled=False, title="Study Copilot") as studyCopilot:
 		gr.Markdown(
 		"""
 		# Study Copilot
-		""")
+        """)
 
 		with gr.Tab('Flashcard Generator'):
 			inp_cards_slides = gr.File(label="Slides:", file_count='multiple', file_types=['.pptx'])
