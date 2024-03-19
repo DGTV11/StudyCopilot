@@ -3,7 +3,7 @@ import os
 import ollama
 import gradio as gr
 
-import modules.model_regen_helper as mrh
+import modules.model_regen as mrh
 import modules.generate_flashcards as gen
 
 if __name__ == '__main__':
