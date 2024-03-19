@@ -1,4 +1,2 @@
-
-
 def autosurf(prompt):
     pass
