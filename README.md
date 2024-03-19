@@ -3,7 +3,7 @@ Study Copilot
 
 ## Requirements
 - At least 8GB of RAM
-- At least 5GB of free storage (just for the models)
+- At least 4.4GB of free storage (just for the models)
 
 ## Installation
 1) Install Python 3.12.0 (https://www.python.org)
