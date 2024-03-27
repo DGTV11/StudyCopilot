@@ -40,11 +40,7 @@ if __name__ == '__main__':
 			pass
 		regen_flashcards_helper_btn = gr.Button(value="Regenerate models", variant='secondary')
 
-		host_url = gr.Textbox(label="Host URL:", value="https://pleasing-precisely-sawfly.ngrok-free.app")
-		reload_host_btn = gr.Button(value="Reload host", variant='secondary')
-
 		regen_flashcards_helper_btn.click(fn=lambda: mrh.regen_models(__file__), inputs=[], outputs=[])
-		reload_host_btn.click(fn=host_module.reload_host, inputs=[host_url], outputs=[])
 		gen_cards_event = generate_cards_btn.click(fn=gen.gen_flashcards, inputs=[inp_cards_slides, inp_cards_words], outputs=[out_cards])
 		stop.click(fn=None, inputs=None, outputs=None, cancels=[gen_cards_event])
 
