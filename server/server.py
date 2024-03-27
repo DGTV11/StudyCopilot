@@ -5,6 +5,8 @@ http_tunnel = ngrok.connect(addr=11434, proto='http', host_header="localhost:114
 
 ngrok_process = ngrok.get_ngrok_process()
 
+print(f'HTTP tunnel: {http_tunnel.public_url}')
+
 try:
     # Block until CTRL-C or some other terminating event
     ngrok_process.proc.wait()
