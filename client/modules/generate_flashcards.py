@@ -1,8 +1,9 @@
 import os
 
-import ollama
 import gradio as gr
 from pptx import Presentation
+
+from modules.host import HOST
 
 def gen_flashcards(slides_filepaths, notes):
 	if (not slides_filepaths) and (not notes):
@@ -22,7 +23,7 @@ def gen_flashcards(slides_filepaths, notes):
 							slides_notes += shape.text + '\n'
 
 		gr.Info('Sending files and text to flashcards_helper...')
-		stream = ollama.chat(
+		stream = HOST.chat(
 				model='flashcards_helper',
 				messages=[{'role': 'user', 'content': f'Text: {slides_notes + notes}\n\nA deck of flashcards:'}],
 				stream=True,

@@ -1,8 +1,9 @@
-import ollama
 import gradio as gr
 
+from modules.host import HOST
+
 def moderate(prompt: str) -> str:
-    return ollama.chat(
+    return HOST.chat(
         model='moderator',
         messages=[{'role': 'user', 'content': f'Text: {prompt}'}],
         stream=False,

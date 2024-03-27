@@ -18,26 +18,31 @@ Study Copilot
 pip install -r requirements.txt
 ```
 
-6) Install the mistral and nomic-embed-text models
+6) Pull the mistral and nomic-embed-text models
 ```sh
 ollama pull mistral
 ollama pull nomic-embed-text
 ```
 
 ## Usage
-1) Run the program
+1) Start the server
 ```sh
-python3 main.py
+python3 server/server.py
 ```
 
-2) Wait for it to show something like
+2) Open another terminal, then run the client
+```sh
+python3 client/client.py
+```
+
+3) Wait for the client to show something like
 ```sh
 Running on local URL:  http://127.0.0.1:7860
 
 To create a public link, set `share=True` in `launch()`.
 ```
 
-3) Open the local URL on your browser
+4) Open the local URL on your browser
 
 ## Features
 1) Flashcard Generator
