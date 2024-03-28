@@ -54,6 +54,10 @@ To create a public link, set `share=True` in `launch()`.
 
 5) Open the local URL on your browser
 
+## Note about ngrok
+- You can only make 20000 HTTP/S requests per month and transfer 1 GB out of the server per month with a free account
+- However, unless you are a dedicated studyer, you are very unlikely to exhaust your free consumption limits
+
 ## Features
 1) Flashcard Generator
 
