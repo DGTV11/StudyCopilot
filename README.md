@@ -6,19 +6,24 @@ Study Copilot
 - At least 4.4GB of free storage (just for the models)
 
 ## Installation
-1) Install Python 3.12.0 (https://www.python.org)
-2) Install ollama (https://ollama.com)
+1) Install Python 3.12.0 (https://www.python.org/downloads/)
+2) Install ollama (https://ollama.com/download)
+3) Install ngrok (https://ngrok.com/download)
 
-3) Clone this repository
+4) Clone this repository
 
-4) Cd into the StudyCopilot directory
+5) Cd into the StudyCopilot directory
 
-5) Install required Python libraries and backages
+6) Get an ngrok account and set up ngrok (https://dashboard.ngrok.com/get-started/setup/macos)
+
+7) Get a free static domain and replace the text in server-url.txt with that domain
+
+8) Install required Python libraries and backages
 ```sh
 pip install -r requirements.txt
 ```
 
-6) Pull the mistral and nomic-embed-text models
+9) Pull the mistral and nomic-embed-text models
 ```sh
 ollama pull mistral
 ollama pull nomic-embed-text
@@ -30,19 +35,24 @@ ollama pull nomic-embed-text
 python3 server/server.py
 ```
 
-2) Open another terminal, then run the client
+2) Wait for the client to show something like
+```sh
+HTTP tunnel: https://xxxxxxxx.ngrok-free.app
+```
+
+3) Open another terminal, then run the client
 ```sh
 python3 client/client.py
 ```
 
-3) Wait for the client to show something like
+4) Wait for the client to show something like
 ```sh
 Running on local URL:  http://127.0.0.1:7860
 
 To create a public link, set `share=True` in `launch()`.
 ```
 
-4) Open the local URL on your browser
+5) Open the local URL on your browser
 
 ## Features
 1) Flashcard Generator
