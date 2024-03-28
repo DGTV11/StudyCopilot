@@ -8,19 +8,23 @@ Study Copilot
 ## Installation
 1) Install Python 3.12.0 (https://www.python.org/downloads/)
 2) Install ollama (https://ollama.com/download)
-3) Install ngrok (https://ngrok.com/download)
 
-4) Clone this repository
+3) Clone this repository
 
-5) Cd into the StudyCopilot directory
+4) Cd into the StudyCopilot directory
 
-6) Get an ngrok account and set up ngrok (https://dashboard.ngrok.com/get-started/setup/macos)
+5) Get an ngrok account and set up ngrok (https://dashboard.ngrok.com/get-started/setup/macos)
 
-7) Get a free static domain and replace the text in server-url.txt with that domain
+6) Get a free static domain and replace the text in server-url.txt with that domain
 
-8) Install required Python libraries and backages
+7) Install required Python libraries and backages
 ```sh
 pip install -r requirements.txt
+```
+
+8) Enter your ngrok auth token using this command (replace `[AUTH TOKEN]` with your actual auth token)
+```sh
+ngrok config add-authtoken [AUTH TOKEN]
 ```
 
 9) Pull the mistral and nomic-embed-text models
