@@ -16,5 +16,5 @@ try:
     # Block until CTRL-C or some other terminating event
     ngrok_process.proc.wait()
 except KeyboardInterrupt:
-    print("Shutting down server.")
+    print('Shutting down HTTP tunnel.')
     ngrok.kill()
