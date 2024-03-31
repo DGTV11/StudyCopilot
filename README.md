@@ -33,6 +33,8 @@ ollama pull mistral
 ollama pull nomic-embed-text
 ```
 
+10) Get a Google API key and a and a Programmable Search Engine ID (https://developers.google.com/custom-search/v1/overview)
+
 ## Usage
 1) Start the server
 ```sh
@@ -60,6 +62,7 @@ To create a public link, set `share=True` in `launch()`.
 
 ## Features
 1) Flashcard Generator
+2) Autosurfer
 
 ## Notes
 ### ngrok

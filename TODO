@@ -1,7 +1,3 @@
 Roadmap:
-1 - Create autosurfer
-
-TODO:
-2 - Get scraper working
-3 - Get RAG working
-4 - Put everything together
+- Improve inference speeds as much as possible with current hardware
+- Offload server to raspberry pi
