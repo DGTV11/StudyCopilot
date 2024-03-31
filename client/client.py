@@ -48,7 +48,7 @@ if __name__ == "__main__":
             stop_flashcards_btn = gr.Button(value="Stop", variant="primary")
             out_cards = gr.Markdown(label="A deck of flashcards:")
             clear_cards_btn = gr.ClearButton(components=[out_cards])
-        with gr.Tab("Web Auto-Surfer"):
+        with gr.Tab("Autosurfer"):
             api_key = gr.Textbox(label="Google API Key:")
             search_engine_id = gr.Textbox(label="Search Engine ID:")
 
