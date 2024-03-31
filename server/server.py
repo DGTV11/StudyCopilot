@@ -5,7 +5,7 @@ from pyngrok import conf, ngrok
 conf.get_default().monitor_thread = False
 
 with open(path.join(path.dirname(path.dirname(__file__)), 'server-url.txt'), 'r') as f:
-    http_tunnel = ngrok.connect(addr=11434, proto='http', host_header="localhost:11434", domain=f.read())
+    http_tunnel = ngrok.connect(addr=11434, proto='http', host_header="localhost:11434", domain=f.read().strip())
 
 # ngrok http 11434 --host-header="localhost:11434" --domain=pleasing-precisely-sawfly.ngrok-free.app
 ngrok_process = ngrok.get_ngrok_process()

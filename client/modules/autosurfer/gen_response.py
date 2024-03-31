@@ -9,8 +9,17 @@ from modules.host import HOST_URL
 from modules.autosurfer.surf_web import gen_queries, search, make_vectorstore_retriever
 from modules.moderate import moderate, check_moderation
 
-def gen_response(api_key: str, search_engine_id: str, prompt: str, chat_history: list[list[str | None | tuple]]) -> tuple[str, list[list[str | None | tuple]]]:
-    check_moderation(moderate(prompt))
+def gen_response(api_key: str, search_engine_id: str, moderator_on: bool, prompt: str, chat_history: list[list[str | None | tuple]]) -> tuple[str, list[list[str | None | tuple]]]:
+    if not api_key:
+        raise gr.Error('No API key provided!')
+    if not search_engine_id:
+        raise gr.Error('No search engine ID provided!')
+
+    if moderator_on:
+        gr.Info('Checking prompt for moderation issues...')
+        check_moderation(moderate(prompt))
+    else:
+        gr.Warning('Moderation is disabled. Use at your own risk!')
     
     queries = gen_queries(prompt)
     search_docs = search(api_key, search_engine_id, queries)
@@ -29,7 +38,13 @@ def gen_response(api_key: str, search_engine_id: str, prompt: str, chat_history:
         | model_local
         | StrOutputParser()
     )
+
+    answer = after_rag_chain.invoke(question)
+
+    if moderator_on:
+        gr.Info('Checking answer for moderation issues...')
+        check_moderation(moderate(answer), raise_error_if_moderated=False)
     
-    chat_history.append((prompt, after_rag_chain.invoke(question)))
+    chat_history.append((prompt, answer))
 
     return '', chat_history

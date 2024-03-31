@@ -2,10 +2,10 @@ import os
 
 import gradio as gr
 
+import modules.host as host_module
 import modules.model_regen as mrh
 import modules.generate_flashcards as gen
 import modules.autosurfer.gen_response as autosurfer
-import modules.host as host_module
 
 if __name__ == "__main__":
     for file in os.listdir(os.path.join(os.path.dirname(__file__), "modelfiles")):
@@ -55,6 +55,7 @@ if __name__ == "__main__":
             autosurfer_chat = gr.Chatbot()
             prompt = gr.Textbox(label="Prompt:")
 
+            moderate_checkbox = gr.Checkbox(label="Moderate", value=True)
             with gr.Row():
                 stop_autosurfer_btn = gr.Button(value="Stop", variant="primary")
                 clear_autosurfer_btn = gr.ClearButton(
@@ -76,7 +77,13 @@ if __name__ == "__main__":
 
         autosurf_event = prompt.submit(
             fn=autosurfer.gen_response,
-            inputs=[api_key, search_engine_id, prompt, autosurfer_chat],
+            inputs=[
+                api_key,
+                search_engine_id,
+                moderate_checkbox,
+                prompt,
+                autosurfer_chat,
+            ],
             outputs=[prompt, autosurfer_chat],
         )
 
