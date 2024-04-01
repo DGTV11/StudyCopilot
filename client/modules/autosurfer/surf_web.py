@@ -41,9 +41,20 @@ def search(api_key: str, search_engine_id: str, queries: list[str]) -> list[Docu
             },
         ).json()
     
-        search_links = [item['link'] for item in search_res['items']][:5]
-        loader = WebBaseLoader(search_links)
-        search_docs.extend(loader.load())
+        search_links = [item['link'] for item in search_res['items']]
+        scraped_links = []
+        for link in search_links:
+            try:
+                scraped_links.extend(WebBaseLoader(link).load())
+            except Exception as e:
+                gr.Warning(f'Encountered exception while scraping {link}: {e}')
+                continue
+            else:
+                gr.Info(f'Successfully scraped {link}')
+            if len(scraped_links) == 5:
+                break
+
+        search_docs.extend(scraped_links)
 
     return search_docs
 
