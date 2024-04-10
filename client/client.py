@@ -37,11 +37,15 @@ if __name__ == "__main__":
             inp_cards_slides = gr.File(
                 label="Slides:", file_count="multiple", file_types=[".pptx"]
             )
+            inp_cards_images = gr.File(
+                label="Images:", file_count="multiple", file_types=[".png", ".jpg", ".jpeg"]
+            )
+
             inp_cards_words = gr.Textbox(label="Notes:")
 
             with gr.Row():
                 clear_inputs_btn = gr.ClearButton(
-                    components=[inp_cards_slides, inp_cards_words]
+                    components=[inp_cards_slides, inp_cards_images, inp_cards_words]
                 )
                 generate_cards_btn = gr.Button(value="Generate Flashcards")
 
@@ -71,7 +75,7 @@ if __name__ == "__main__":
         )
         gen_cards_event = generate_cards_btn.click(
             fn=gen.gen_flashcards,
-            inputs=[inp_cards_slides, inp_cards_words],
+            inputs=[inp_cards_slides, inp_cards_images, inp_cards_words],
             outputs=[out_cards],
         )
 
