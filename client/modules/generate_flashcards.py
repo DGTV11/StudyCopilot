@@ -5,7 +5,7 @@ from pptx import Presentation
 
 from modules.host import HOST
 
-def gen_flashcards(slides_filepaths, image_filepaths, notes):
+def gen_flashcards(slides_filepaths, image_filepaths, notes, get_slides_images):
     if (not slides_filepaths) and (not notes) and (not image_filepaths):
         raise gr.Error("Please provide at least one slideshow and/or image file and/or text.")
     else:
@@ -23,7 +23,7 @@ def gen_flashcards(slides_filepaths, image_filepaths, notes):
                     for shape in slide.shapes:
                         if hasattr(shape, "text"):
                             slides_notes += shape.text + "\n"
-                        if hasattr(shape, "image"):
+                        if get_slides_images and hasattr(shape, "image"):
                             gr.Info(f'Grabbing and describing image from slide {j}/{len_slides}...')
                             slides_notes += '\n' + HOST.generate(model="llava", prompt="Describe the content of this image in detail as if it were text", images=[shape.image.blob])['response'] + '\n'
                             gr.Info(f"Finished describing image!")

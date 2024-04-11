@@ -13,9 +13,9 @@ Study Copilot
 
 4) Cd into the StudyCopilot directory
 
-5) Get an ngrok account and set up ngrok (https://dashboard.ngrok.com/get-started/setup/macos)
+5) (optional) Get an ngrok account and set up ngrok (https://dashboard.ngrok.com/get-started/setup/macos)
 
-6) Get a free static domain and replace the text in server-url.txt with that domain
+6) (optional) Get a free static domain and replace the text in server-url.txt with that domain
 
 7) Install required Python libraries and backages
 ```sh
@@ -37,9 +37,9 @@ ollama pull llava
 10) Get a Google API key and a and a Programmable Search Engine ID (https://developers.google.com/custom-search/v1/overview)
 
 ## Usage
-1) Start the server
+1) (optional) Start a tunnel
 ```sh
-python3 server/server.py
+ngrok http 11434 --proto=http --host-header="localhost:11434" --domain=pleasing-precisely-sawfly.ngrok-free.app
 ```
 
 2) Wait for the client to show something like

@@ -43,6 +43,7 @@ if __name__ == "__main__":
 
             inp_cards_words = gr.Textbox(label="Notes:")
 
+            get_slides_images_checkbox = gr.Checkbox(label="Get images from slides", value=True)
             with gr.Row():
                 clear_inputs_btn = gr.ClearButton(
                     components=[inp_cards_slides, inp_cards_images, inp_cards_words]
@@ -75,7 +76,7 @@ if __name__ == "__main__":
         )
         gen_cards_event = generate_cards_btn.click(
             fn=gen.gen_flashcards,
-            inputs=[inp_cards_slides, inp_cards_images, inp_cards_words],
+            inputs=[inp_cards_slides, inp_cards_images, inp_cards_words, get_slides_images_checkbox],
             outputs=[out_cards],
         )
 
