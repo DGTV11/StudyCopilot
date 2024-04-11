@@ -22,7 +22,7 @@ Study Copilot
 pip install -r requirements.txt
 ```
 
-8) Enter your ngrok auth token using this command (replace `[AUTH TOKEN]` with your actual auth token)
+8) (optional) Enter your ngrok auth token using this command (replace `[AUTH TOKEN]` with your actual auth token)
 ```sh
 ngrok config add-authtoken [AUTH TOKEN]
 ```
