@@ -3,7 +3,7 @@ Study Copilot
 
 ## Requirements
 - At least 8GB of RAM
-- At least 9.2GB of free storage (just for the models)
+- At least 10.8GB of free storage (just for the models)
 
 ## Installation
 1) Install Python 3.12.0 (https://www.python.org/downloads/)
@@ -27,11 +27,12 @@ pip install -r requirements.txt
 ngrok config add-authtoken [AUTH TOKEN]
 ```
 
-9) Pull the mistral,  nomic-embed-text, and llava models
+9) Pull the mistral, stablelm-zephyr, llava and nomic-embed-text models
 ```sh
 ollama pull mistral
-ollama pull nomic-embed-text
+ollama pull stablelm-zephyr
 ollama pull llava
+ollama pull nomic-embed-text
 ```
 
 10) Get a Google API key and a and a Programmable Search Engine ID (https://developers.google.com/custom-search/v1/overview)

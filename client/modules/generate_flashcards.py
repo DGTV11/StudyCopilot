@@ -5,7 +5,7 @@ from pptx import Presentation
 
 from modules.host import HOST
 
-def gen_flashcards(slides_filepaths, image_filepaths, notes, get_slides_images):
+def gen_flashcards(flashcards_helper_model, slides_filepaths, image_filepaths, notes, get_slides_images):
     if (not slides_filepaths) and (not notes) and (not image_filepaths):
         raise gr.Error("Please provide at least one slideshow and/or image file and/or text.")
     else:
@@ -36,9 +36,9 @@ def gen_flashcards(slides_filepaths, image_filepaths, notes, get_slides_images):
                 images_notes += '\n' + HOST.generate(model="llava", prompt="Describe the content of this image in detail as if it were text", images=[filepath])['response'] + '\n'
                 gr.Info(f"Finished describing image!")
 
-        gr.Info("Sending files and text to flashcards_helper...")
+        gr.Info(f"Sending files and text to flashcards_helper_{flashcards_helper_model}...")
         stream = HOST.generate(
-            model="flashcards_helper",
+            model=f"flashcards_helper_{flashcards_helper_model}",
             prompt=f"\nText: {slides_notes + images_notes + notes}\n\nA deck of flashcards:\n",
             stream=True,
         )

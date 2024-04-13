@@ -50,6 +50,7 @@ if __name__ == "__main__":
                 )
                 generate_cards_btn = gr.Button(value="Generate Flashcards")
 
+            flashcards_helper_model = gr.Dropdown(['stablelm-zephyr', 'mistral'], label="Model:", value='stablelm-zephyr')
             stop_flashcards_btn = gr.Button(value="Stop", variant="primary")
             out_cards = gr.Markdown(label="A deck of flashcards:")
             clear_cards_btn = gr.ClearButton(components=[out_cards])
@@ -76,7 +77,7 @@ if __name__ == "__main__":
         )
         gen_cards_event = generate_cards_btn.click(
             fn=gen.gen_flashcards,
-            inputs=[inp_cards_slides, inp_cards_images, inp_cards_words, get_slides_images_checkbox],
+            inputs=[flashcards_helper_model, inp_cards_slides, inp_cards_images, inp_cards_words, get_slides_images_checkbox],
             outputs=[out_cards],
         )
 
