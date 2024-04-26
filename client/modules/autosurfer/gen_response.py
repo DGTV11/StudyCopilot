@@ -5,10 +5,10 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_community.chat_models import ChatOllama
 
-from modules.host import HOST_URL
+from modules.host import HOST_URL, HOST
 from modules.autosurfer.surf_web import gen_queries, search, make_vectorstore_retriever
 from modules.latent_space_activation.technique01_dialog import lsa_query
-    from modules.moderate import moderate, check_moderation
+from modules.moderate import moderate, check_moderation
 
 def gen_response(api_key: str, search_engine_id: str, autosurfer_model: str, online_mode: bool, moderator_on: bool, prompt: str, chat_history: list[list[str | None | tuple]]) -> tuple[str, list[list[str | None | tuple]]]:
     if online_mode:
@@ -59,8 +59,9 @@ def gen_response(api_key: str, search_engine_id: str, autosurfer_model: str, onl
 
         answer = ''
 
-        for message in enumerate(lsa_query(prompt, model=f'guardrailed_{autosurfer_model}', chatbot=chatbot)):
+        for message in enumerate(lsa_query(prompt, model=f'guardrailed_{autosurfer_model}', chatbot=HOST.chat)):
             if message[0] % 2 == 0:
+                gr.Info(f'INTERROGATOR sent \'{message[1]["content"]}\'')
                 answer += f'\n\nINTERROGATOR: {message[1]["content"]}'
             else:
                 answer += f'\n\nCHATBOT:\n{message[1]["content"]}'

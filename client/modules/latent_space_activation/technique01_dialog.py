@@ -7,9 +7,9 @@ import yaml
 
 ###     constants
 PROMPTS = [
-  'What information do I already know about this topic? What information do I need to recall into my working memory to best answer this?',
-  'What techniques or methods do I know that I can use to answer this question or solve this problem? How can I integrate what I already know, and recall more valuable facts, approaches, and techniques?',
-  'And finally, with all this in mind, I will now discuss the question or problem and render my final answer.',]
+  'What information do you already know about this topic? What information do you need to recall into your working memory to best answer this?',
+  'What techniques or methods do you know that you can use to answer this question or solve this problem? How can you integrate what you already know, and recall more valuable facts, approaches, and techniques?',
+  'And finally, with all this in mind, you will now discuss the question or problem and render your final answer.',]
 
 SYSTEM = """# MISSION
 You are an internal dialog iterator for an LLM (large language model) neural network. LLMs possess "latent space" (embedded knowledge and capabilities). You will be given a main query as well as a sequence of questions. Your role is to answer the queries as a way of "activating" the latent space inside your own neural network. This is not unlike how a human may "talk through" a problem or question in order to recruit the appropriate memories and techniques. The ultimate goal is to answer the main query listed below.
@@ -25,12 +25,10 @@ The USER will play the role of interrogator. Your answers will be thorough and c
 
 ###     API functions
 def chatbot(messages, model='mistral'):
-    max_retry = 7
-    retry = 0
     spinner = Halo(text='Thinking...', spinner='dots')
     spinner.start()
             
-    response = ollama.chat(messages=conversation, model=model)
+    response = ollama.chat(messages=messages, model=model)
 
     spinner.stop()
             
@@ -50,7 +48,7 @@ def lsa_query(main_question, model='mistral', chatbot=ollama.chat):
         conversation.append(interrogator_message)
         yield interrogator_message
 
-        response = chatbot(conversation)['message']['content']
+        response = chatbot(messages=conversation, model=model)['message']['content']
 
         assistant_message = {'role': 'assistant', 'content': response}
         conversation.append(assistant_message)

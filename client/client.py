@@ -65,7 +65,7 @@ if __name__ == "__main__":
                 moderate_checkbox = gr.Checkbox(label="Moderate", value=True)
                 online_mode_checkbox = gr.Checkbox(label="Search web?", value=True)
 
-            flashcards_helper_model = gr.Dropdown(['phi3', 'mistral'], label="Model:", value='phi3')
+            autosurfer_model = gr.Dropdown(['phi3', 'mistral'], label="Model:", value='phi3')
 
             with gr.Row():
                 stop_autosurfer_btn = gr.Button(value="Stop", variant="primary")
