@@ -50,7 +50,7 @@ if __name__ == "__main__":
                 )
                 generate_cards_btn = gr.Button(value="Generate Flashcards")
 
-            flashcards_helper_model = gr.Dropdown(['stablelm-zephyr', 'mistral'], label="Model:", value='stablelm-zephyr')
+            flashcards_helper_model = gr.Dropdown(['phi3', 'mistral'], label="Model:", value='phi3')
             stop_flashcards_btn = gr.Button(value="Stop", variant="primary")
             out_cards = gr.Markdown(label="A deck of flashcards:")
             clear_cards_btn = gr.ClearButton(components=[out_cards])
@@ -60,8 +60,13 @@ if __name__ == "__main__":
 
             autosurfer_chat = gr.Chatbot()
             prompt = gr.Textbox(label="Prompt:")
+            
+            with gr.Row():
+                moderate_checkbox = gr.Checkbox(label="Moderate", value=True)
+                online_mode_checkbox = gr.Checkbox(label="Search web?", value=True)
 
-            moderate_checkbox = gr.Checkbox(label="Moderate", value=True)
+            flashcards_helper_model = gr.Dropdown(['phi3', 'mistral'], label="Model:", value='phi3')
+
             with gr.Row():
                 stop_autosurfer_btn = gr.Button(value="Stop", variant="primary")
                 clear_autosurfer_btn = gr.ClearButton(
@@ -77,7 +82,13 @@ if __name__ == "__main__":
         )
         gen_cards_event = generate_cards_btn.click(
             fn=gen.gen_flashcards,
-            inputs=[flashcards_helper_model, inp_cards_slides, inp_cards_images, inp_cards_words, get_slides_images_checkbox],
+            inputs=[
+                flashcards_helper_model, 
+                inp_cards_slides, 
+                inp_cards_images, 
+                inp_cards_words, 
+                get_slides_images_checkbox
+            ],
             outputs=[out_cards],
         )
 
@@ -86,6 +97,8 @@ if __name__ == "__main__":
             inputs=[
                 api_key,
                 search_engine_id,
+                autosurfer_model,
+                online_mode_checkbox,
                 moderate_checkbox,
                 prompt,
                 autosurfer_chat,

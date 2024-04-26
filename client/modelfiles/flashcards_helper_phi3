@@ -1,4 +1,4 @@
-FROM stablelm-zephyr
+FROM phi3
 SYSTEM """
 I want you to create a deck of flashcards from the text.
 
