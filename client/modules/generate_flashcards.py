@@ -19,9 +19,7 @@ def send_to_model(flashcards_helper_model, text):
 
     log.log_info("Flashcard Generator", "Generating flashcards...")
     for chunk in stream:
-        res_stream += chunk["response"]
-        yield res_stream
-
+        yield chunk["response"]
 
 def gen_flashcards(
     flashcards_helper_model, slides_filepaths, image_filepaths, notes, get_slides_images
@@ -92,6 +90,7 @@ def gen_flashcards(
                             f"Sending slides {slides_notes_start_slide}-{j-1} of slideshow {i}/{len_filepaths} to flashcards_helper_{flashcards_helper_model}...",
                         )
                         for res in send_to_model(flashcards_helper_model, slides_notes):
+                            res_stream += res
                             yield res_stream + res
                         res_stream += "\n"
                         slides_notes = slides_name + slide_notes
@@ -133,6 +132,7 @@ def gen_flashcards(
                         f"Sending images {images_notes_start_image}-{i-1} of slideshow {i}/{len_filepaths} to flashcards_helper_{flashcards_helper_model}...",
                     )
                     for res in send_to_model(flashcards_helper_model, images_notes):
+                        res_stream += res
                         yield res_stream + res
                     res_stream += "\n\n"
                     images_notes = image_notes
@@ -152,5 +152,6 @@ def gen_flashcards(
                     f"Sending chunk {i}/{len_chunks} of textual notes to flashcards_helper_{flashcards_helper_model}...",
                 )
                 for res in send_to_model(flashcards_helper_model, chunk):
+                    res_stream += res
                     yield res_stream + res
                 res_stream += "\n\n"
