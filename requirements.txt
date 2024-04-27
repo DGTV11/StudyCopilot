@@ -9,3 +9,5 @@ bs4==0.0.2
 nest_asyncio==1.6.0
 tiktoken==0.6.0
 chromadb==0.4.24
+tokenizers==0.15.2
+semantic-text-splitter==0.12.1
