@@ -96,14 +96,14 @@ def gen_flashcards(flashcards_helper_model, slides_filepaths, image_filepaths, n
                 else:
                     images_notes += image_notes
 
-        tokenizer = Tokenizer.from_pretrained("bert-base-uncased")
-        splitter = TextSplitter.from_huggingface_tokenizer(tokenizer, ctx_window)
+        if notes.strip():
+            splitter = TextSplitter.from_huggingface_tokenizer(tokenizer, ctx_window)
 
-        chunks = splitter.chunks(notes)
-        len_chunks = len(chunks)
+            chunks = splitter.chunks(notes)
+            len_chunks = len(chunks)
 
-        for i, chunk in enumerate(chunks, start=1):
-            gr.Info(f"Sending chunk {i}/{len_chunks} of textual notes to flashcards_helper_{flashcards_helper_model}...")
-            for res in send_to_model(flashcards_helper_model, chunk):
-                yield res_stream + res
-            res_stream += '\n\n'
+            for i, chunk in enumerate(chunks, start=1):
+                gr.Info(f"Sending chunk {i}/{len_chunks} of textual notes to flashcards_helper_{flashcards_helper_model}...")
+                for res in send_to_model(flashcards_helper_model, chunk):
+                    yield res_stream + res
+                res_stream += '\n\n'
