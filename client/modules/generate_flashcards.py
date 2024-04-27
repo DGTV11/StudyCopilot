@@ -5,7 +5,9 @@ from pptx import Presentation
 from semantic_text_splitter import TextSplitter
 from tokenizers import Tokenizer
 
+import modules.logging as log
 from modules.host import HOST
+
 
 def send_to_model(flashcards_helper_model, text):
     stream = HOST.generate(
@@ -15,26 +17,31 @@ def send_to_model(flashcards_helper_model, text):
     )
     res_stream = ""
 
-    gr.Info("Generating flashcards...")
+    log.log_info("Flashcard Generator", "Generating flashcards...")
     for chunk in stream:
         res_stream += chunk["response"]
         yield res_stream
 
-def gen_flashcards(flashcards_helper_model, slides_filepaths, image_filepaths, notes, get_slides_images):
+
+def gen_flashcards(
+    flashcards_helper_model, slides_filepaths, image_filepaths, notes, get_slides_images
+):
     match flashcards_helper_model:
-        case 'mistral':
+        case "mistral":
             tokenizer = Tokenizer.from_pretrained("mistralai/Mistral-7B-Instruct-v0.2")
-            ctx_window = 32768-505
-        case 'phi3':
+            ctx_window = 32768 - 505
+        case "phi3":
             tokenizer = Tokenizer.from_pretrained("microsoft/Phi-3-mini-4k-instruct")
-            ctx_window = 4096-505   
+            ctx_window = 4096 - 505
         case _:
             raise gr.Error(f"{flashcards_helper_model} is not a supported model.")
 
     num_token_func = lambda text: len(tokenizer.encode(text).ids)
 
     if (not slides_filepaths) and (not notes) and (not image_filepaths):
-        raise gr.Error("Please provide at least one slideshow and/or image file and/or text.")
+        raise gr.Error(
+            "Please provide at least one slideshow and/or image file and/or text."
+        )
     else:
         res_stream = ""
         if slides_filepaths:
@@ -43,30 +50,50 @@ def gen_flashcards(flashcards_helper_model, slides_filepaths, image_filepaths, n
                 slides_name = os.path.basename(filepath).split(".")[0] + "\n"
                 slides = Presentation(filepath).slides
                 len_slides = len(slides)
-                gr.Info(
-                    f"Grabbing text from slideshow {i}/{len_filepaths} ({len(slides)} slides)..."
+                log.log_info(
+                    "Flashcard Generator",
+                    f"Grabbing text from slideshow {i}/{len_filepaths} ({len(slides)} slides)...",
                 )
                 slides_notes = slides_name
                 slides_notes_start_slide = 1
                 for j, slide in enumerate(slides, start=1):
-                    slide_notes = ''
+                    slide_notes = ""
 
                     for shape in slide.shapes:
                         if hasattr(shape, "text"):
                             slide_notes += shape.text + "\n"
                         if get_slides_images and hasattr(shape, "image"):
-                            gr.Info(f'Grabbing and describing image from slide {j}/{len_slides}...')
-                            slide_notes += '\n' + HOST.generate(model="llava", prompt="Describe the content of this image in detail as if it were text", images=[shape.image.blob])['response'] + '\n'
-                            gr.Info(f"Finished describing image!")
+                            log.log_info(
+                                "Flashcard Generator",
+                                f"Grabbing and describing image from slide {j}/{len_slides}...",
+                            )
+                            slide_notes += (
+                                "\n"
+                                + HOST.generate(
+                                    model="llava",
+                                    prompt="Describe the content of this image in detail as if it were text",
+                                    images=[shape.image.blob],
+                                )["response"]
+                                + "\n"
+                            )
+                            log.log_info(
+                                "Flashcard Generator", f"Finished describing image!"
+                            )
 
                     slide_notes_num_tokens = num_token_func(slide_notes)
                     slides_notes_num_tokens = num_token_func(slides_notes)
 
-                    if slides_notes_num_tokens + slide_notes_num_tokens > ctx_window or j == len_slides:
-                        gr.Info(f"Sending slides {slides_notes_start_slide}-{j-1} of slideshow {i}/{len_filepaths} to flashcards_helper_{flashcards_helper_model}...")
+                    if (
+                        slides_notes_num_tokens + slide_notes_num_tokens > ctx_window
+                        or j == len_slides
+                    ):
+                        log.log_info(
+                            "Flashcard Generator",
+                            f"Sending slides {slides_notes_start_slide}-{j-1} of slideshow {i}/{len_filepaths} to flashcards_helper_{flashcards_helper_model}...",
+                        )
                         for res in send_to_model(flashcards_helper_model, slides_notes):
                             yield res_stream + res
-                        res_stream += '\n'
+                        res_stream += "\n"
                         slides_notes = slides_name + slide_notes
                         slides_notes_start_slide = j
                     else:
@@ -75,22 +102,39 @@ def gen_flashcards(flashcards_helper_model, slides_filepaths, image_filepaths, n
         if image_filepaths:
             len_filepaths = len(image_filepaths)
             images_notes_start_image = 1
-            images_notes = ''
+            images_notes = ""
             for i, filepath in enumerate(image_filepaths, start=1):
                 image_notes = os.path.basename(filepath).split(".")[0] + "\n"
 
-                gr.Info(f"Grabbing and describing image {i}/{len_filepaths}...")
-                image_notes = '\n' + HOST.generate(model="llava", prompt="Describe the content of this image in detail as if it were text", images=[filepath])['response'] + '\n'
-                gr.Info(f"Finished describing image!")
+                log.log_info(
+                    "Flashcard Generator",
+                    f"Grabbing and describing image {i}/{len_filepaths}...",
+                )
+                image_notes = (
+                    "\n"
+                    + HOST.generate(
+                        model="llava",
+                        prompt="Describe the content of this image in detail as if it were text",
+                        images=[filepath],
+                    )["response"]
+                    + "\n"
+                )
+                log.log_info("Flashcard Generator", f"Finished describing image!")
 
                 image_notes_num_tokens = num_token_func(image_notes)
                 images_notes_num_tokens = num_token_func(images_notes)
-                
-                if images_notes_num_tokens + image_notes_num_tokens > ctx_window or i == len_filepaths:
-                    gr.Info(f"Sending images {images_notes_start_image}-{i-1} of slideshow {i}/{len_filepaths} to flashcards_helper_{flashcards_helper_model}...")
+
+                if (
+                    images_notes_num_tokens + image_notes_num_tokens > ctx_window
+                    or i == len_filepaths
+                ):
+                    log.log_info(
+                        "Flashcard Generator",
+                        f"Sending images {images_notes_start_image}-{i-1} of slideshow {i}/{len_filepaths} to flashcards_helper_{flashcards_helper_model}...",
+                    )
                     for res in send_to_model(flashcards_helper_model, images_notes):
                         yield res_stream + res
-                    res_stream += '\n\n'
+                    res_stream += "\n\n"
                     images_notes = image_notes
                     images_notes_start_image = i
                 else:
@@ -103,7 +147,10 @@ def gen_flashcards(flashcards_helper_model, slides_filepaths, image_filepaths, n
             len_chunks = len(chunks)
 
             for i, chunk in enumerate(chunks, start=1):
-                gr.Info(f"Sending chunk {i}/{len_chunks} of textual notes to flashcards_helper_{flashcards_helper_model}...")
+                log.log_info(
+                    "Flashcard Generator",
+                    f"Sending chunk {i}/{len_chunks} of textual notes to flashcards_helper_{flashcards_helper_model}...",
+                )
                 for res in send_to_model(flashcards_helper_model, chunk):
                     yield res_stream + res
-                res_stream += '\n\n'
+                res_stream += "\n\n"
