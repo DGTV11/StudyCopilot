@@ -12,7 +12,7 @@ from modules.host import HOST
 def send_to_model(flashcards_helper_model, text):
     stream = HOST.generate(
         model=f"flashcards_helper_{flashcards_helper_model}",
-        prompt=f"\nText: {slides_notes + images_notes + notes}\n\nA deck of flashcards:\n",
+        prompt=f"\nText: {text}\n\nA deck of flashcards:\n",
         stream=True,
     )
     res_stream = ""
