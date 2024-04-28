@@ -27,10 +27,10 @@ def gen_flashcards(
     match flashcards_helper_model:
         case "mistral":
             tokenizer = Tokenizer.from_pretrained("mistralai/Mistral-7B-Instruct-v0.2")
-            ctx_window = int((32768 - 505)*0.75)
+            ctx_window = (32768 - 505)//2
         case "phi3":
             tokenizer = Tokenizer.from_pretrained("microsoft/Phi-3-mini-4k-instruct")
-            ctx_window = int((4096 - 505)*0.75)
+            ctx_window = (4096 - 505)//2
         case _:
             raise gr.Error(f"{flashcards_helper_model} is not a supported model.")
 
