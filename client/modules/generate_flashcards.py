@@ -109,8 +109,8 @@ def gen_flashcards(
                         )
                         for res in send_to_model(flashcards_helper_model, slides_notes):
                             res_stream += res
-                            yield res_stream + res
-                        res_stream += "\n"
+                            yield res_stream
+                        res_stream += "\n\n"
 
         if image_filepaths:
             len_filepaths = len(image_filepaths)
@@ -160,7 +160,7 @@ def gen_flashcards(
                     )
                     for res in send_to_model(flashcards_helper_model, images_notes):
                         res_stream += res
-                        yield res_stream + res
+                        yield res_stream
                     res_stream += "\n\n"
 
         if notes.strip():
@@ -176,5 +176,5 @@ def gen_flashcards(
                 )
                 for res in send_to_model(flashcards_helper_model, chunk):
                     res_stream += res
-                    yield res_stream + res
+                    yield res_stream
                 res_stream += "\n\n"
