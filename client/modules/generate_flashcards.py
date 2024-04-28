@@ -27,10 +27,10 @@ def gen_flashcards(
     match flashcards_helper_model:
         case "mistral":
             tokenizer = Tokenizer.from_pretrained("mistralai/Mistral-7B-Instruct-v0.2")
-            ctx_window = 32768 - 505
+            ctx_window = int((32768 - 505)*0.75)
         case "phi3":
             tokenizer = Tokenizer.from_pretrained("microsoft/Phi-3-mini-4k-instruct")
-            ctx_window = 4096 - 505
+            ctx_window = int((4096 - 505)*0.75)
         case _:
             raise gr.Error(f"{flashcards_helper_model} is not a supported model.")
 
@@ -88,6 +88,7 @@ def gen_flashcards(
 
                     if (
                         slides_notes_num_tokens + slide_notes_num_tokens > ctx_window
+                        or j == len_slides
                     ):
                         log.log_info(
                             "Flashcard Generator",
@@ -101,16 +102,6 @@ def gen_flashcards(
                         slides_notes_start_slide = j
                     else:
                         slides_notes += slide_notes
-
-                    if j == len_slides:
-                        log.log_info(
-                            "Flashcard Generator",
-                            f"Sending slides {slides_notes_start_slide}-{j} of slideshow {i}/{len_filepaths} to flashcards_helper_{flashcards_helper_model}...",
-                        )
-                        for res in send_to_model(flashcards_helper_model, slides_notes):
-                            res_stream += res
-                            yield res_stream + res
-                        res_stream += "\n"
 
         if image_filepaths:
             len_filepaths = len(image_filepaths)
@@ -139,10 +130,11 @@ def gen_flashcards(
 
                 if (
                     images_notes_num_tokens + image_notes_num_tokens > ctx_window
+                    or i == len_filepaths
                 ):
                     log.log_info(
                         "Flashcard Generator",
-                        f"Sending images {images_notes_start_image}/{len_filepaths}-{i-1}/{len_filepaths} to flashcards_helper_{flashcards_helper_model}...",
+                        f"Sending images {images_notes_start_image}-{i-1} of slideshow {i}/{len_filepaths} to flashcards_helper_{flashcards_helper_model}...",
                     )
                     for res in send_to_model(flashcards_helper_model, images_notes):
                         res_stream += res
@@ -152,16 +144,6 @@ def gen_flashcards(
                     images_notes_start_image = i
                 else:
                     images_notes += image_notes
-
-                if i == len_filepaths:
-                    log.log_info(
-                        "Flashcard Generator",
-                        f"Sending images {images_notes_start_image}/{len_filepaths}-{i}/{len_filepaths} to flashcards_helper_{flashcards_helper_model}...",
-                    )
-                    for res in send_to_model(flashcards_helper_model, images_notes):
-                        res_stream += res
-                        yield res_stream + res
-                    res_stream += "\n\n"
 
         if notes.strip():
             splitter = TextSplitter.from_huggingface_tokenizer(tokenizer, ctx_window)
