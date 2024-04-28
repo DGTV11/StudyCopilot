@@ -27,7 +27,7 @@ def gen_flashcards(
     match flashcards_helper_model:
         case "mistral":
             tokenizer = Tokenizer.from_pretrained("mistralai/Mistral-7B-Instruct-v0.2")
-            ctx_window = round((32768 - 505)*0.75)
+            ctx_window = round((8192 - 505)*0.75)
         case "phi3":
             tokenizer = Tokenizer.from_pretrained("microsoft/Phi-3-mini-4k-instruct")
             ctx_window = round((4096 - 505)*0.75)
