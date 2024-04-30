@@ -1,4 +1,5 @@
 import os
+from time import time
 
 import gradio as gr
 from pptx import Presentation
@@ -7,7 +8,7 @@ from tokenizers import Tokenizer
 
 import modules.logging as log
 from modules.host import HOST
-
+from modules.config import CONFIG
 
 def send_to_model(flashcards_helper_model, text):
     stream = HOST.generate(
@@ -26,11 +27,11 @@ def gen_flashcards(
 ):
     match flashcards_helper_model:
         case "mistral":
-            tokenizer = Tokenizer.from_pretrained("mistralai/Mistral-7B-Instruct-v0.2")
-            ctx_window = round((8192 - 505)*0.75)
+            tokenizer = Tokenizer.from_pretrained("mistralai/Mistral-7B-Instruct-v0.2", auth_token=CONFIG['huggingface_user_access_token'])
+            ctx_window = round((4096 - 505)*0.75) #32K context window, 4K for maximum coherency
         case "phi3":
-            tokenizer = Tokenizer.from_pretrained("microsoft/Phi-3-mini-4k-instruct")
-            ctx_window = round((4096 - 505)*0.75)
+            tokenizer = Tokenizer.from_pretrained("microsoft/Phi-3-mini-4k-instruct", auth_token=CONFIG['huggingface_user_access_token'])
+            ctx_window = round((2048 - 505)*0.75) #4K context window, 2K for increased coherency
         case _:
             raise gr.Error(f"{flashcards_helper_model} is not a supported model.")
 
@@ -50,7 +51,7 @@ def gen_flashcards(
                 len_slides = len(slides)
                 log.log_info(
                     "Flashcard Generator",
-                    f"Grabbing text from slideshow {i}/{len_filepaths} ({len(slides)} slides)...",
+                    f"Reading slideshow {i}/{len_filepaths} ({len(slides)} slides)",
                 )
                 slides_notes = slides_name
                 slides_notes_start_slide = 1
@@ -68,8 +69,10 @@ def gen_flashcards(
                         if get_slides_images and hasattr(shape, "image"):
                             log.log_info(
                                 "Flashcard Generator",
-                                f"Grabbing and describing image from slide {j}/{len_slides}...",
+                                f"Grabbing and describing image from slide {j}/{len_slides}",
                             )
+                            
+                            start_time = time()
                             slide_notes += (
                                 "\n"
                                 + HOST.generate(
@@ -79,8 +82,10 @@ def gen_flashcards(
                                 )["response"]
                                 + "\n"
                             )
+                            end_time = time()
+
                             log.log_info(
-                                "Flashcard Generator", f"Finished describing image!"
+                                "Flashcard Generator", f"Finished describing image! ({round(end_time-start_time, 2)}s)"
                             )
 
                     slide_notes_num_tokens = num_token_func(slide_notes)
@@ -91,7 +96,7 @@ def gen_flashcards(
                     ):
                         log.log_info(
                             "Flashcard Generator",
-                            f"Sending slides {slides_notes_start_slide}-{j-1} of slideshow {i}/{len_filepaths} to flashcards_helper_{flashcards_helper_model}...",
+                            f"Sending slides {slides_notes_start_slide}-{j-1} of slideshow {i}/{len_filepaths} to flashcards_helper_{flashcards_helper_model}",
                         )
                         for res in send_to_model(flashcards_helper_model, slides_notes):
                             res_stream += res
@@ -105,7 +110,7 @@ def gen_flashcards(
                     if j == len_slides:
                         log.log_info(
                             "Flashcard Generator",
-                            f"Sending slides {slides_notes_start_slide}-{j} of slideshow {i}/{len_filepaths} to flashcards_helper_{flashcards_helper_model}...",
+                            f"Sending slides {slides_notes_start_slide}-{j} of slideshow {i}/{len_filepaths} to flashcards_helper_{flashcards_helper_model}",
                         )
                         for res in send_to_model(flashcards_helper_model, slides_notes):
                             res_stream += res
@@ -142,7 +147,7 @@ def gen_flashcards(
                 ):
                     log.log_info(
                         "Flashcard Generator",
-                        f"Sending images {images_notes_start_image}/{len_filepaths}-{i-1}/{len_filepaths} to flashcards_helper_{flashcards_helper_model}...",
+                        f"Sending images {images_notes_start_image}/{len_filepaths}-{i-1}/{len_filepaths} to flashcards_helper_{flashcards_helper_model}",
                     )
                     for res in send_to_model(flashcards_helper_model, images_notes):
                         res_stream += res
@@ -156,7 +161,7 @@ def gen_flashcards(
                 if i == len_filepaths:
                     log.log_info(
                         "Flashcard Generator",
-                        f"Sending images {images_notes_start_image}/{len_filepaths}-{i}/{len_filepaths} to flashcards_helper_{flashcards_helper_model}...",
+                        f"Sending images {images_notes_start_image}/{len_filepaths}-{i}/{len_filepaths} to flashcards_helper_{flashcards_helper_model}",
                     )
                     for res in send_to_model(flashcards_helper_model, images_notes):
                         res_stream += res
@@ -172,9 +177,12 @@ def gen_flashcards(
             for i, chunk in enumerate(chunks, start=1):
                 log.log_info(
                     "Flashcard Generator",
-                    f"Sending chunk {i}/{len_chunks} of textual notes to flashcards_helper_{flashcards_helper_model}...",
+                    f"Sending chunk {i}/{len_chunks} of textual notes to flashcards_helper_{flashcards_helper_model}",
                 )
                 for res in send_to_model(flashcards_helper_model, chunk):
                     res_stream += res
                     yield res_stream
                 res_stream += "\n\n"
+
+        log.log_info("Flashcard Generator", "Finished generating flashcards")
+        yield ''

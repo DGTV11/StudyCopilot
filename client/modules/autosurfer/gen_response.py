@@ -10,33 +10,33 @@ from modules.host import HOST_URL, HOST
 from modules.autosurfer.surf_web import gen_queries, search, make_vectorstore_retriever
 from modules.latent_space_activation.technique01_dialog import lsa_query
 from modules.moderate import moderate, check_moderation
-
+from modules.config import CONFIG
 
 def gen_response(
-    api_key: str,
-    search_engine_id: str,
     autosurfer_model: str,
     online_mode: bool,
     moderator_on: bool,
     prompt: str,
     chat_history: list[list[str | None | tuple]],
 ) -> tuple[str, list[list[str | None | tuple]]]:
+    if moderator_on:
+        log.log_info("Autosurfer", "Checking prompt for moderation issues")
+        check_moderation('Autosurfer', moderate(prompt))
+    else:
+        log.log_warning(
+            "Autosurfer", "Moderation is disabled. Use at your own risk!"
+        )
+
     if online_mode:
-        if not api_key:
-            raise gr.Error("No API key provided!")
-        if not search_engine_id:
-            raise gr.Error("No search engine ID provided!")
-
-        if moderator_on:
-            log.log_info("Autosurfer", "Checking prompt for moderation issues...")
-            check_moderation(moderate(prompt))
-        else:
-            log.log_warning(
-                "Autosurfer", "Moderation is disabled. Use at your own risk!"
-            )
-
+        log.log_info('Autosurfer', 'Generating search queries')
         queries = gen_queries(prompt)
-        search_docs = search(api_key, search_engine_id, queries)
+        len_queries = len(queries)
+
+        for i, query in enumerate(queries, start=1):
+            log.log_info('Autosurfer', f'Query {i}/{len_queries}: {query}')
+        
+        log.log_info('Autosurfer', 'Searching web')
+        search_docs = search(CONFIG['google_api_key'], CONFIG['google_search_engine_id'], queries)
         retriever = make_vectorstore_retriever(search_docs)
 
         model_local = ChatOllama(
@@ -55,24 +55,9 @@ def gen_response(
             | StrOutputParser()
         )
 
+        log.log_info("Answering question")
         answer = after_rag_chain.invoke(question)
-
-        if moderator_on:
-            log.log_info("Autosurfer", "Checking answer for moderation issues...")
-            check_moderation(moderate(answer), raise_error_if_moderated=False)
-
-        chat_history.append((prompt, answer))
-
-        return "", chat_history
     else:
-        if moderator_on:
-            log.log_info("Autosurfer", "Checking prompt for moderation issues...")
-            check_moderation(moderate(prompt))
-        else:
-            log.log_warning(
-                "Autosurfer", "Moderation is disabled. Use at your own risk!"
-            )
-
         answer = ""
 
         for message in enumerate(
@@ -88,5 +73,10 @@ def gen_response(
             else:
                 answer += f'\n\nCHATBOT:\n{message[1]["content"]}'
 
-        chat_history.append((prompt, answer))
-        return "", chat_history
+    if moderator_on:
+        log.log_info("Autosurfer", "Checking answer for moderation issues")
+        check_moderation('Autosurfer', moderate(answer), raise_error_if_moderated=False)
+
+    log.log_info('Autosurfer', 'Finished generating response')
+    chat_history.append((prompt, answer))
+    return "", chat_history
