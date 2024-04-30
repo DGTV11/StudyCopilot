@@ -1,7 +1,6 @@
 import re
 import ollama
 from time import time, sleep
-from halo import Halo
 import textwrap
 import yaml
 
@@ -27,12 +26,9 @@ The USER will play the role of interrogator. Your answers will be thorough and c
 
 ###     API functions
 def chatbot(messages, model="mistral"):
-    spinner = Halo(text="Thinking...", spinner="dots")
-    spinner.start()
+    print("Thinking...")
 
     response = ollama.chat(messages=messages, model=model)
-
-    spinner.stop()
 
     return response
 

@@ -55,9 +55,6 @@ if __name__ == "__main__":
             out_cards = gr.Markdown(label="A deck of flashcards:")
             clear_cards_btn = gr.ClearButton(components=[out_cards])
         with gr.Tab("Autosurfer"):
-            api_key = gr.Textbox(label="Google API Key:")
-            search_engine_id = gr.Textbox(label="Search Engine ID:")
-
             autosurfer_chat = gr.Chatbot()
             prompt = gr.Textbox(label="Prompt:")
             
@@ -95,8 +92,6 @@ if __name__ == "__main__":
         autosurf_event = prompt.submit(
             fn=autosurfer.gen_response,
             inputs=[
-                api_key,
-                search_engine_id,
                 autosurfer_model,
                 online_mode_checkbox,
                 moderate_checkbox,

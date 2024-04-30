@@ -15,7 +15,7 @@ Study Copilot
 
 5) (optional) Get an ngrok account and set up ngrok (https://dashboard.ngrok.com/get-started/setup/macos)
 
-6) (optional) Get a free static domain and replace the text in server-url.txt with that domain
+6) (optional) Get a free static domain
 
 7) Install required Python libraries and backages
 ```sh
@@ -35,9 +35,20 @@ ollama pull llava
 ollama pull nomic-embed-text
 ```
 
-10) Get a Google API key and a and a Programmable Search Engine ID (https://developers.google.com/custom-search/v1/overview)
+10) Create a Hugging Face account (https://huggingface.co/)
+
+11) Get gated model access for Mistral (model: mistralai/Mistral-7B-Instruct-v0.2)
+
+12) Get a Hugging Face User Access Token (https://huggingface.co/settings/tokens)
+
+13) Get a Google API key and a and a Programmable Search Engine ID (https://developers.google.com/custom-search/v1/overview)
 
 ## Usage
+1) Configure StudyCopilot if you have not already done so
+```sh
+python3 edit_config.py
+```
+
 1) (optional) Start a tunnel
 ```sh
 ngrok http 11434 --proto=http --host-header="localhost:11434" --domain=pleasing-precisely-sawfly.ngrok-free.app
