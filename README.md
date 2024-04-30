@@ -35,7 +35,23 @@ ollama pull llava
 ollama pull nomic-embed-text
 ```
 
-10) Get a Google API key and a and a Programmable Search Engine ID (https://developers.google.com/custom-search/v1/overview)
+10) Create a Hugging Face account (https://huggingface.co/)
+
+11) Get gated model access for Mistral (model: mistralai/Mistral-7B-Instruct-v0.2)
+
+12) Get a Hugging Face User Access Token (https://huggingface.co/settings/tokens)
+
+13) Install the Hugging Face CLI
+```sh
+pip install -U "huggingface_hub[cli]"
+```
+
+14) Authenticate using your User Access Token
+```sh
+huggingface-cli login
+```
+
+15) (optional, needed for Autosurfer Online mode) Get a Google API key and a and a Programmable Search Engine ID (https://developers.google.com/custom-search/v1/overview)
 
 ## Usage
 1) (optional) Start a tunnel
