@@ -38,31 +38,39 @@ if __name__ == "__main__":
                 label="Slides:", file_count="multiple", file_types=[".pptx"]
             )
             inp_cards_images = gr.File(
-                label="Images:", file_count="multiple", file_types=[".png", ".jpg", ".jpeg"]
+                label="Images:",
+                file_count="multiple",
+                file_types=[".png", ".jpg", ".jpeg"],
             )
 
             inp_cards_words = gr.Textbox(label="Notes:")
 
-            get_slides_images_checkbox = gr.Checkbox(label="Get images from slides", value=True)
+            get_slides_images_checkbox = gr.Checkbox(
+                label="Get images from slides", value=True
+            )
             with gr.Row():
                 clear_inputs_btn = gr.ClearButton(
                     components=[inp_cards_slides, inp_cards_images, inp_cards_words]
                 )
                 generate_cards_btn = gr.Button(value="Generate Flashcards")
 
-            flashcards_helper_model = gr.Dropdown(['phi3', 'mistral'], label="Model:", value='phi3')
+            flashcards_helper_model = gr.Dropdown(
+                ["phi3", "mistral"], label="Model:", value="phi3"
+            )
             stop_flashcards_btn = gr.Button(value="Stop", variant="primary")
             out_cards = gr.Markdown(label="A deck of flashcards:")
             clear_cards_btn = gr.ClearButton(components=[out_cards])
         with gr.Tab("Autosurfer"):
             autosurfer_chat = gr.Chatbot()
             prompt = gr.Textbox(label="Prompt:")
-            
+
             with gr.Row():
                 moderate_checkbox = gr.Checkbox(label="Moderate", value=True)
                 online_mode_checkbox = gr.Checkbox(label="Search web?", value=True)
 
-            autosurfer_model = gr.Dropdown(['phi3', 'mistral'], label="Model:", value='phi3')
+            autosurfer_model = gr.Dropdown(
+                ["phi3", "mistral"], label="Model:", value="phi3"
+            )
 
             with gr.Row():
                 stop_autosurfer_btn = gr.Button(value="Stop", variant="primary")
@@ -80,11 +88,11 @@ if __name__ == "__main__":
         gen_cards_event = generate_cards_btn.click(
             fn=gen.gen_flashcards,
             inputs=[
-                flashcards_helper_model, 
-                inp_cards_slides, 
-                inp_cards_images, 
-                inp_cards_words, 
-                get_slides_images_checkbox
+                flashcards_helper_model,
+                inp_cards_slides,
+                inp_cards_images,
+                inp_cards_words,
+                get_slides_images_checkbox,
             ],
             outputs=[out_cards],
         )

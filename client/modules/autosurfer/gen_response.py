@@ -1,5 +1,6 @@
-import gradio as gr
+from time import time
 
+import gradio as gr
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
@@ -12,6 +13,7 @@ from modules.latent_space_activation.technique01_dialog import lsa_query
 from modules.moderate import moderate, check_moderation
 from modules.config import CONFIG
 
+
 def gen_response(
     autosurfer_model: str,
     online_mode: bool,
@@ -21,23 +23,45 @@ def gen_response(
 ) -> tuple[str, list[list[str | None | tuple]]]:
     if moderator_on:
         log.log_info("Autosurfer", "Checking prompt for moderation issues")
-        check_moderation('Autosurfer', moderate(prompt))
+
+        start_time = time()
+        check_moderation("Autosurfer", moderate(prompt))
+        end_time = time()
+
+        log.log_info(
+            "Autosurfer",
+            f"Checked prompt for moderation issues ({round(end_time-start_time, 2)}s)",
+        )
     else:
-        log.log_warning(
-            "Autosurfer", "Moderation is disabled. Use at your own risk!"
+        log.log_warning("Autosurfer", "Moderation is disabled. Use at your own risk!")
+
+    response_start_time = time()
+    if online_mode:
+        log.log_info("Autosurfer", "Generating search queries")
+
+        start_time = time()
+        queries = gen_queries(prompt)
+        end_time = time()
+
+        log.log_info(
+            "Autosurfer",
+            f"Generated {len(queries)} search queries ({round(end_time-start_time, 2)}s)",
         )
 
-    if online_mode:
-        log.log_info('Autosurfer', 'Generating search queries')
-        queries = gen_queries(prompt)
         len_queries = len(queries)
-
         for i, query in enumerate(queries, start=1):
-            log.log_info('Autosurfer', f'Query {i}/{len_queries}: {query}')
-        
-        log.log_info('Autosurfer', 'Searching web')
-        search_docs = search(CONFIG['google_api_key'], CONFIG['google_search_engine_id'], queries)
+            log.log_info("Autosurfer", f"Query {i}/{len_queries}: {query}")
+
+        log.log_info("Autosurfer", "Searching web")
+
+        start_time = time()
+        search_docs = search(
+            CONFIG["google_api_key"], CONFIG["google_search_engine_id"], queries
+        )
         retriever = make_vectorstore_retriever(search_docs)
+        end_time = time()
+
+        log.log_info("Autosurfer", f"Searched web ({round(end_time-start_time, 2)}s)")
 
         model_local = ChatOllama(
             model=f"guardrailed_{autosurfer_model}", base_url=HOST_URL
@@ -55,11 +79,21 @@ def gen_response(
             | StrOutputParser()
         )
 
-        log.log_info("Answering question")
+        log.log_info("Answering question using RAG")
+
+        start_time = time()
         answer = after_rag_chain.invoke(question)
+        end_time = time()
+
+        log.log_info(
+            "Autosurfer", f"Answered question ({round(end_time-start_time, 2)}s)"
+        )
     else:
         answer = ""
 
+        log.log_info("Autosurfer", "Answering question using LSA")
+
+        start_time = time()
         for message in enumerate(
             lsa_query(
                 prompt, model=f"guardrailed_{autosurfer_model}", chatbot=HOST.chat
@@ -72,11 +106,29 @@ def gen_response(
                 answer += f'\n\nINTERROGATOR: {message[1]["content"]}'
             else:
                 answer += f'\n\nCHATBOT:\n{message[1]["content"]}'
+        end_time = time()
+
+        log.log_info(
+            "Autosurfer", f"Answered question ({round(end_time-start_time, 2)}s)"
+        )
 
     if moderator_on:
         log.log_info("Autosurfer", "Checking answer for moderation issues")
-        check_moderation('Autosurfer', moderate(answer), raise_error_if_moderated=False)
 
-    log.log_info('Autosurfer', 'Finished generating response')
+        start_time = time()
+        check_moderation("Autosurfer", moderate(answer), raise_error_if_moderated=False)
+        end_time = time()
+
+        log.log_info(
+            "Autosurfer",
+            f"Checked answer for moderation issues ({round(end_time-start_time, 2)}s)",
+        )
+
+    response_end_time = time()
+
+    log.log_info(
+        "Autosurfer",
+        f"Finished generating response ({round(response_end_time-response_start_time, 2)}s)",
+    )
     chat_history.append((prompt, answer))
     return "", chat_history
