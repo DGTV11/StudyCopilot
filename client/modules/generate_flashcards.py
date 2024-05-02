@@ -12,11 +12,7 @@ from modules.config import CONFIG
 
 
 def show_markdown(text):
-    return (
-        text
-        if text.startswith("```") and text.endswith("```")
-        else "```" + text
-    )
+    return text if text.startswith("```") and text.endswith("```") else "```" + text
 
 
 def send_to_model(flashcards_helper_model, text):
