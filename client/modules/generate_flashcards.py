@@ -235,7 +235,7 @@ def gen_flashcards(
                 chunk_num_tokens = num_token_func(chunk)
                 log.log_info(
                     "Flashcard Generator",
-                    f"Sending chunk {i}/{len_chunks} of textual notes to flashcards_helper_{flashcards_helper_model} ({chunk} tokens)",
+                    f"Sending chunk {i}/{len_chunks} of textual notes to flashcards_helper_{flashcards_helper_model} ({chunk_num_tokens} tokens)",
                 )
 
                 start_time = time()
