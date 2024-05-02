@@ -80,9 +80,7 @@ if __name__ == "__main__":
                     components=[prompt, autosurfer_chat]
                 )
 
-        regen_models_btn = gr.Button(
-            value="Regenerate models", variant="secondary"
-        )
+        regen_models_btn = gr.Button(value="Regenerate models", variant="secondary")
 
         regen_models_btn.click(
             fn=lambda: mrh.regen_models(__file__), inputs=[], outputs=[]

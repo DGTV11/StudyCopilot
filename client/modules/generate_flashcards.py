@@ -10,8 +10,10 @@ import modules.logging as log
 from modules.host import HOST
 from modules.config import CONFIG
 
+
 def show_markdown(text):
-    return '``' + text + '``'
+    return "``" + text + "``"
+
 
 def send_to_model(flashcards_helper_model, text):
     stream = HOST.generate(
