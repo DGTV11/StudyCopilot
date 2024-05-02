@@ -75,7 +75,7 @@ To create a public link, set `share=True` in `launch()`.
 
 ## Features
 1) Flashcard Generator
-2) Autosurfer
+2) Study Chatbot
 
 ## Notes
 ### ngrok

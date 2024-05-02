@@ -8,7 +8,7 @@ from langchain_community.chat_models import ChatOllama
 
 import modules.logging as log
 from modules.host import HOST_URL, HOST
-from modules.autosurfer.surf_web import gen_queries, search, make_vectorstore_retriever
+from modules.study_chatbot.surf_web import gen_queries, search, make_vectorstore_retriever
 from modules.latent_space_activation.technique01_dialog import lsa_query
 from modules.moderate import moderate, check_moderation
 from modules.config import CONFIG

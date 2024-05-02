@@ -5,7 +5,7 @@ import gradio as gr
 import modules.host as host_module
 import modules.model_regen as mrh
 import modules.generate_flashcards as gen
-import modules.autosurfer.gen_response as autosurfer
+import modules.study_chatbot.gen_response as study_chatbot
 
 if __name__ == "__main__":
     for file in os.listdir(os.path.join(os.path.dirname(__file__), "modelfiles")):
@@ -62,22 +62,22 @@ if __name__ == "__main__":
             with gr.Row():
                 show_markdown_btn = gr.Button(value="Show Markdown")
                 clear_cards_btn = gr.ClearButton(components=[out_cards])
-        with gr.Tab("Autosurfer"):
-            autosurfer_chat = gr.Chatbot()
+        with gr.Tab("Study Chatbot"):
+            study_chat = gr.Chatbot()
             prompt = gr.Textbox(label="Prompt:")
 
             with gr.Row():
                 moderate_checkbox = gr.Checkbox(label="Moderate", value=True)
                 online_mode_checkbox = gr.Checkbox(label="Search web?", value=True)
 
-            autosurfer_model = gr.Dropdown(
+            study_chatbot_model = gr.Dropdown(
                 ["phi3", "mistral"], label="Model:", value="phi3"
             )
 
             with gr.Row():
-                stop_autosurfer_btn = gr.Button(value="Stop", variant="primary")
-                clear_autosurfer_btn = gr.ClearButton(
-                    components=[prompt, autosurfer_chat]
+                stop_study_chatbot_btn = gr.Button(value="Stop", variant="primary")
+                clear_study_chatbot_btn = gr.ClearButton(
+                    components=[prompt, study_chat]
                 )
 
         regen_models_btn = gr.Button(value="Regenerate models", variant="secondary")
@@ -101,23 +101,23 @@ if __name__ == "__main__":
             fn=gen.show_markdown, inputs=[out_cards], outputs=[out_cards]
         )
 
-        autosurf_event = prompt.submit(
-            fn=autosurfer.gen_response,
+        study_chatbot_submit_event = prompt.submit(
+            fn=study_chatbot.gen_response,
             inputs=[
-                autosurfer_model,
+                study_chatbot_model,
                 online_mode_checkbox,
                 moderate_checkbox,
                 prompt,
-                autosurfer_chat,
+                study_chat,
             ],
-            outputs=[prompt, autosurfer_chat],
+            outputs=[prompt, study_chat],
         )
 
         stop_flashcards_btn.click(
             fn=None, inputs=None, outputs=None, cancels=[gen_cards_event]
         )
-        stop_autosurfer_btn.click(
-            fn=None, inputs=None, outputs=None, cancels=[autosurf_event]
+        stop_study_chatbot_btn.click(
+            fn=None, inputs=None, outputs=None, cancels=[study_chatbot_submit_event]
         )
 
     print("Launching...")
