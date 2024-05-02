@@ -15,7 +15,7 @@ def show_markdown(text):
     return (
         text
         if text.startswith("```") and text.endswith("```")
-        else "```" + text + "```"
+        else "```" + text
     )
 
 
