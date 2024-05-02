@@ -59,7 +59,9 @@ if __name__ == "__main__":
             )
             stop_flashcards_btn = gr.Button(value="Stop", variant="primary")
             out_cards = gr.Markdown(label="A deck of flashcards:")
-            clear_cards_btn = gr.ClearButton(components=[out_cards])
+            with gr.Row():
+                show_markdown_btn = gr.Button(value="Show Markdown")
+                clear_cards_btn = gr.ClearButton(components=[out_cards])
         with gr.Tab("Autosurfer"):
             autosurfer_chat = gr.Chatbot()
             prompt = gr.Textbox(label="Prompt:")
@@ -78,13 +80,14 @@ if __name__ == "__main__":
                     components=[prompt, autosurfer_chat]
                 )
 
-        regen_flashcards_helper_btn = gr.Button(
+        regen_models_btn = gr.Button(
             value="Regenerate models", variant="secondary"
         )
 
-        regen_flashcards_helper_btn.click(
+        regen_models_btn.click(
             fn=lambda: mrh.regen_models(__file__), inputs=[], outputs=[]
         )
+
         gen_cards_event = generate_cards_btn.click(
             fn=gen.gen_flashcards,
             inputs=[
@@ -95,6 +98,9 @@ if __name__ == "__main__":
                 get_slides_images_checkbox,
             ],
             outputs=[out_cards],
+        )
+        show_markdown_btn.click(
+            fn=gen.show_markdown, inputs=[out_cards], outputs=[out_cards]
         )
 
         autosurf_event = prompt.submit(

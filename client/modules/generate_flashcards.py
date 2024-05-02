@@ -10,6 +10,8 @@ import modules.logging as log
 from modules.host import HOST
 from modules.config import CONFIG
 
+def show_markdown(text):
+    return '``' + text + '``'
 
 def send_to_model(flashcards_helper_model, text):
     stream = HOST.generate(
@@ -35,8 +37,8 @@ def gen_flashcards(
                 auth_token=CONFIG["huggingface_user_access_token"],
             )
             ctx_window = round(
-                (4096 - 505) * 0.75
-            )  # 32K context window, 4K for maximum coherency
+                (2048 - 505) * 0.75
+            )  # 32K context window, 2K for maximum coherency
         case "phi3":
             tokenizer = Tokenizer.from_pretrained(
                 "microsoft/Phi-3-mini-4k-instruct",
@@ -108,13 +110,13 @@ def gen_flashcards(
                     if slides_notes_num_tokens + slide_notes_num_tokens > ctx_window:
                         log.log_info(
                             "Flashcard Generator",
-                            f"Sending slides {slides_notes_start_slide}-{j-1} of slideshow {i}/{len_filepaths} to flashcards_helper_{flashcards_helper_model}",
+                            f"Sending slides {slides_notes_start_slide}-{j-1} of slideshow {i}/{len_filepaths} to flashcards_helper_{flashcards_helper_model} ({slides_notes_num_tokens} tokens)",
                         )
 
                         start_time = time()
                         for res in send_to_model(flashcards_helper_model, slides_notes):
                             res_stream += res
-                            yield res_stream + res
+                            yield res_stream
                         end_time = time()
 
                         log.log_info(
@@ -122,7 +124,7 @@ def gen_flashcards(
                             f"Finished generating batch of flashcards ({round(end_time-start_time, 2)}s)",
                         )
 
-                        res_stream += "\n"
+                        res_stream += "\n\n"
                         slides_notes = slides_name + slide_notes
                         slides_notes_start_slide = j
                     else:
@@ -131,7 +133,7 @@ def gen_flashcards(
                     if j == len_slides:
                         log.log_info(
                             "Flashcard Generator",
-                            f"Sending slides {slides_notes_start_slide}-{j} of slideshow {i}/{len_filepaths} to flashcards_helper_{flashcards_helper_model}",
+                            f"Sending slides {slides_notes_start_slide}-{j} of slideshow {i}/{len_filepaths} to flashcards_helper_{flashcards_helper_model} ({slides_notes_num_tokens + slide_notes_num_tokens} tokens)",
                         )
 
                         start_time = time()
@@ -182,13 +184,13 @@ def gen_flashcards(
                 if images_notes_num_tokens + image_notes_num_tokens > ctx_window:
                     log.log_info(
                         "Flashcard Generator",
-                        f"Sending images {images_notes_start_image}/{len_filepaths}-{i-1}/{len_filepaths} to flashcards_helper_{flashcards_helper_model}",
+                        f"Sending images {images_notes_start_image}/{len_filepaths}-{i-1}/{len_filepaths} to flashcards_helper_{flashcards_helper_model} ({images_notes_num_tokens} tokens)",
                     )
 
                     start_time = time()
                     for res in send_to_model(flashcards_helper_model, images_notes):
                         res_stream += res
-                        yield res_stream + res
+                        yield res_stream
                     end_time = time()
 
                     log.log_info(
@@ -205,7 +207,7 @@ def gen_flashcards(
                 if i == len_filepaths:
                     log.log_info(
                         "Flashcard Generator",
-                        f"Sending images {images_notes_start_image}/{len_filepaths}-{i}/{len_filepaths} to flashcards_helper_{flashcards_helper_model}",
+                        f"Sending images {images_notes_start_image}/{len_filepaths}-{i}/{len_filepaths} to flashcards_helper_{flashcards_helper_model} ({images_notes_num_tokens + image_notes_num_tokens} tokens)",
                     )
 
                     start_time = time()
@@ -228,15 +230,16 @@ def gen_flashcards(
             len_chunks = len(chunks)
 
             for i, chunk in enumerate(chunks, start=1):
+                chunk_num_tokens = num_token_func(chunk)
                 log.log_info(
                     "Flashcard Generator",
-                    f"Sending chunk {i}/{len_chunks} of textual notes to flashcards_helper_{flashcards_helper_model}",
+                    f"Sending chunk {i}/{len_chunks} of textual notes to flashcards_helper_{flashcards_helper_model} ({chunk} tokens)",
                 )
 
                 start_time = time()
                 for res in send_to_model(flashcards_helper_model, chunk):
                     res_stream += res
-                    yield res_stream + res
+                    yield res_stream
                 end_time = time()
 
                 log.log_info(
