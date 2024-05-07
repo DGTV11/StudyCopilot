@@ -49,29 +49,29 @@ ollama pull nomic-embed-text
 python3 edit_config.py
 ```
 
-1) (optional) Start a tunnel
+2) (optional) Start a tunnel
 ```sh
 ngrok http 11434 --proto=http --host-header="localhost:11434" --domain=pleasing-precisely-sawfly.ngrok-free.app
 ```
 
-2) Wait for the client to show something like
+3) Wait for the client to show something like
 ```sh
 HTTP tunnel: https://xxxxxxxx.ngrok-free.app
 ```
 
-3) Open another terminal, then run the client
+4) Open another terminal, then run the client
 ```sh
 python3 client/client.py
 ```
 
-4) Wait for the client to show something like
+5) Wait for the client to show something like
 ```sh
 Running on local URL:  http://127.0.0.1:7860
 
 To create a public link, set `share=True` in `launch()`.
 ```
 
-5) Open the local URL on your browser
+6) Open the local URL on your browser
 
 ## Features
 1) Flashcard Generator
