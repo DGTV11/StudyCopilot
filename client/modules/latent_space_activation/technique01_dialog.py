@@ -1,8 +1,9 @@
 import re
-import ollama
 from time import time, sleep
 import textwrap
 import yaml
+
+from modules.host import HOST
 
 ###     constants
 PROMPTS = [
@@ -28,7 +29,7 @@ The USER will play the role of interrogator. Your answers will be thorough and c
 def chatbot(messages, model="mistral"):
     print("Thinking...")
 
-    response = ollama.chat(messages=messages, model=model)
+    response = HOST.chat(messages=messages, model=model)
 
     return response
 
