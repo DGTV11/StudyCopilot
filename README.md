@@ -51,7 +51,7 @@ python3 edit_config.py
 
 2) (optional) Start a tunnel
 ```sh
-ngrok http 11434 --proto=http --host-header="localhost:11434" --domain=xxxxxxxx.ngrok-free.app
+ngrok http 11434 --host-header="localhost:11434" --domain=xxxxxxxx.ngrok-free.app
 ```
 
 3) Wait for the client to show something like
