@@ -13,7 +13,6 @@ from modules.host import HOST, HOST_URL
 
 
 def gen_queries(prompt: str) -> list[str]:
-    log.log_info("Autosurfer", "Generating search queries...")
     queries_str = HOST.chat(
         model="search_query_generator",
         messages=[{"role": "user", "content": f"Prompt: {prompt}\n\nQueries:"}],
@@ -56,7 +55,7 @@ def search(api_key: str, search_engine_id: str, queries: list[str]) -> list[Docu
                 continue
             else:
                 log.log_info("Autosurfer", f"Successfully scraped {link}")
-            if len(scraped_links) == 5:
+            if len(scraped_links) == 2:
                 break
 
         search_docs.extend(scraped_links)
@@ -65,7 +64,6 @@ def search(api_key: str, search_engine_id: str, queries: list[str]) -> list[Docu
 
 
 def make_vectorstore_retriever(search_docs: list[Document]) -> VectorStoreRetriever:
-    log.log_info("Autosurfer", "Processing search results...")
 
     text_splitter = CharacterTextSplitter.from_tiktoken_encoder(
         chunk_size=7500, chunk_overlap=100

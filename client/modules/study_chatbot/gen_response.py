@@ -56,12 +56,16 @@ def gen_response(
 
         start_time = time()
         search_docs = search(
-            CONFIG["google_api_key"], CONFIG["google_search_engine_id"], queries
+            CONFIG["google_api_key"], CONFIG["google_prog_search_engine_id"], queries
         )
+        end_time = time()
+        log.log_info("Autosurfer", f"Searched web ({round(end_time-start_time, 2)}s)")
+
+        start_time = time()
+        log.log_info("Autosurfer", "Processing search results...")
         retriever = make_vectorstore_retriever(search_docs)
         end_time = time()
-
-        log.log_info("Autosurfer", f"Searched web ({round(end_time-start_time, 2)}s)")
+        log.log_info("Autosurfer", f"Processed search results ({round(end_time-start_time, 2)}s)")
 
         model_local = ChatOllama(
             model=f"guardrailed_{autosurfer_model}", base_url=HOST_URL
