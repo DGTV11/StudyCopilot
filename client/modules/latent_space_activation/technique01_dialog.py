@@ -43,7 +43,7 @@ def chat_print(text):
     print("\n\n\nCHATBOT:\n\n%s" % formatted_text)
 
 
-def lsa_query(main_question, model="mistral", chatbot=ollama.chat):
+def lsa_query(main_question, model="mistral", chatbot=HOST.chat):
     conversation = list()
     conversation.append(
         {"role": "system", "content": SYSTEM.replace("<<QUERY>>", main_question)}
