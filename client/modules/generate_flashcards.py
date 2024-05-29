@@ -107,7 +107,7 @@ def gen_flashcards(
                     if slides_notes_num_tokens + slide_notes_num_tokens > ctx_window:
                         log.log_info(
                             "Flashcard Generator",
-                            f"Sending slides {slides_notes_start_slide}-{j-1} of slideshow {i}/{len_filepaths} to flashcards_helper_{flashcards_helper_model} ({slides_notes_num_tokens} tokens)",
+                            f"Sending slides {slides_notes_start_slide}-{j-1} of slideshow {i}/{len_filepaths} to flashcards_helper_{flashcards_helper_model} ({slides_notes_num_tokens}/{ctx_window} tokens)",
                         )
 
                         start_time = time()
@@ -130,7 +130,7 @@ def gen_flashcards(
                     if j == len_slides:
                         log.log_info(
                             "Flashcard Generator",
-                            f"Sending slides {slides_notes_start_slide}-{j} of slideshow {i}/{len_filepaths} to flashcards_helper_{flashcards_helper_model} ({slides_notes_num_tokens + slide_notes_num_tokens} tokens)",
+                            f"Sending slides {slides_notes_start_slide}-{j} of slideshow {i}/{len_filepaths} to flashcards_helper_{flashcards_helper_model} ({slides_notes_num_tokens + slide_notes_num_tokens}/{ctx_window} tokens)",
                         )
 
                         start_time = time()
@@ -181,7 +181,7 @@ def gen_flashcards(
                 if images_notes_num_tokens + image_notes_num_tokens > ctx_window:
                     log.log_info(
                         "Flashcard Generator",
-                        f"Sending images {images_notes_start_image}/{len_filepaths}-{i-1}/{len_filepaths} to flashcards_helper_{flashcards_helper_model} ({images_notes_num_tokens} tokens)",
+                        f"Sending images {images_notes_start_image}/{len_filepaths}-{i-1}/{len_filepaths} to flashcards_helper_{flashcards_helper_model} ({images_notes_num_tokens}/{ctx_window} tokens)",
                     )
 
                     start_time = time()
@@ -204,7 +204,7 @@ def gen_flashcards(
                 if i == len_filepaths:
                     log.log_info(
                         "Flashcard Generator",
-                        f"Sending images {images_notes_start_image}/{len_filepaths}-{i}/{len_filepaths} to flashcards_helper_{flashcards_helper_model} ({images_notes_num_tokens + image_notes_num_tokens} tokens)",
+                        f"Sending images {images_notes_start_image}/{len_filepaths}-{i}/{len_filepaths} to flashcards_helper_{flashcards_helper_model} ({images_notes_num_tokens + image_notes_num_tokens}/{ctx_window} tokens)",
                     )
 
                     start_time = time()
@@ -230,7 +230,7 @@ def gen_flashcards(
                 chunk_num_tokens = num_token_func(chunk)
                 log.log_info(
                     "Flashcard Generator",
-                    f"Sending chunk {i}/{len_chunks} of textual notes to flashcards_helper_{flashcards_helper_model} ({chunk_num_tokens} tokens)",
+                    f"Sending chunk {i}/{len_chunks} of textual notes to flashcards_helper_{flashcards_helper_model} ({chunk_num_tokens}/{ctx_window} tokens)",
                 )
 
                 start_time = time()
