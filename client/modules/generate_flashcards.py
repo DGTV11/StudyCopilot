@@ -14,19 +14,18 @@ from modules.config import CONFIG
 def show_markdown(text):
     return text if text.startswith("```") and text.endswith("```") else "```" + text
 
-
-def send_to_model(flashcards_helper_model, text):
+def send_to_model(flashcards_helper_model, ctx_window, text):
     stream = HOST.generate(
         model=f"flashcards_helper_{flashcards_helper_model}",
         prompt=f"\nText: {text}\n\nA deck of flashcards:\n",
         stream=True,
+        options={"num_ctx": ctx_window},
     )
     res_stream = ""
 
     log.log_info("Flashcard Generator", "Generating flashcards...")
     for chunk in stream:
         yield chunk["response"]
-
 
 def gen_flashcards(
     flashcards_helper_model, slides_filepaths, image_filepaths, notes, get_slides_images
@@ -38,17 +37,13 @@ def gen_flashcards(
                 "mistralai/Mistral-7B-Instruct-v0.2",
                 auth_token=CONFIG["huggingface_user_access_token"],
             )
-            ctx_window = round(
-                (2048 - 505) * 0.75
-            )  # 32K context window, 2K for maximum coherency
+            ctx_window = 16384 #usually 32768 but reduced to lower RAM usage
         case "phi3":
             tokenizer = Tokenizer.from_pretrained(
                 "microsoft/Phi-3-mini-4k-instruct",
                 auth_token=CONFIG["huggingface_user_access_token"],
             )
-            ctx_window = round(
-                (2048 - 505) * 0.75
-            )  # 4K context window, 2K for increased coherency
+            ctx_window = 4096
         case _:
             raise gr.Error(f"{flashcards_helper_model} is not a supported model.")
 
@@ -116,7 +111,7 @@ def gen_flashcards(
                         )
 
                         start_time = time()
-                        for res in send_to_model(flashcards_helper_model, slides_notes):
+                        for res in send_to_model(flashcards_helper_model, ctx_window, slides_notes):
                             res_stream += res
                             yield res_stream
                         end_time = time()
@@ -139,7 +134,7 @@ def gen_flashcards(
                         )
 
                         start_time = time()
-                        for res in send_to_model(flashcards_helper_model, slides_notes):
+                        for res in send_to_model(flashcards_helper_model, ctx_window, slides_notes):
                             res_stream += res
                             yield res_stream
                         end_time = time()
@@ -190,7 +185,7 @@ def gen_flashcards(
                     )
 
                     start_time = time()
-                    for res in send_to_model(flashcards_helper_model, images_notes):
+                    for res in send_to_model(flashcards_helper_model, ctx_window, images_notes):
                         res_stream += res
                         yield res_stream
                     end_time = time()
@@ -213,7 +208,7 @@ def gen_flashcards(
                     )
 
                     start_time = time()
-                    for res in send_to_model(flashcards_helper_model, images_notes):
+                    for res in send_to_model(flashcards_helper_model, ctx_window, images_notes):
                         res_stream += res
                         yield res_stream
                     end_time = time()
@@ -239,7 +234,7 @@ def gen_flashcards(
                 )
 
                 start_time = time()
-                for res in send_to_model(flashcards_helper_model, chunk):
+                for res in send_to_model(flashcards_helper_model, ctx_window, chunk):
                     res_stream += res
                     yield res_stream
                 end_time = time()
