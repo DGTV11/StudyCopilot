@@ -31,7 +31,7 @@ ngrok config add-authtoken [AUTH TOKEN]
 ```sh
 ollama pull mistral
 ollama pull phi3
-ollama pull llava
+ollama pull llava-llama3
 ollama pull nomic-embed-text
 ```
 

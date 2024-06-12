@@ -88,7 +88,7 @@ def gen_flashcards(
                             slide_notes += (
                                 "\n"
                                 + HOST.generate(
-                                    model="llava",
+                                    model="llava-llama3",
                                     prompt="Describe the content of this image in detail as if it were text",
                                     images=[shape.image.blob],
                                 )["response"]
@@ -162,7 +162,7 @@ def gen_flashcards(
                 image_notes = (
                     "\n"
                     + HOST.generate(
-                        model="llava",
+                        model="llava-llama3",
                         prompt="Describe the content of this image in detail as if it were text",
                         images=[filepath],
                     )["response"]
