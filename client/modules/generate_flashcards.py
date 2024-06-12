@@ -14,6 +14,7 @@ from modules.config import CONFIG
 def show_markdown(text):
     return text if text.startswith("```") and text.endswith("```") else "```" + text
 
+
 def send_to_model(flashcards_helper_model, ctx_window, text):
     stream = HOST.generate(
         model=f"flashcards_helper_{flashcards_helper_model}",
@@ -27,6 +28,7 @@ def send_to_model(flashcards_helper_model, ctx_window, text):
     for chunk in stream:
         yield chunk["response"]
 
+
 def gen_flashcards(
     flashcards_helper_model, slides_filepaths, image_filepaths, notes, get_slides_images
 ):
@@ -37,7 +39,7 @@ def gen_flashcards(
                 "mistralai/Mistral-7B-Instruct-v0.2",
                 auth_token=CONFIG["huggingface_user_access_token"],
             )
-            ctx_window = 16384 #usually 32768 but reduced to lower RAM usage
+            ctx_window = 16384  # usually 32768 but reduced to lower RAM usage
         case "phi3":
             tokenizer = Tokenizer.from_pretrained(
                 "microsoft/Phi-3-mini-4k-instruct",
@@ -111,7 +113,9 @@ def gen_flashcards(
                         )
 
                         start_time = time()
-                        for res in send_to_model(flashcards_helper_model, ctx_window, slides_notes):
+                        for res in send_to_model(
+                            flashcards_helper_model, ctx_window, slides_notes
+                        ):
                             res_stream += res
                             yield res_stream
                         end_time = time()
@@ -134,7 +138,9 @@ def gen_flashcards(
                         )
 
                         start_time = time()
-                        for res in send_to_model(flashcards_helper_model, ctx_window, slides_notes):
+                        for res in send_to_model(
+                            flashcards_helper_model, ctx_window, slides_notes
+                        ):
                             res_stream += res
                             yield res_stream
                         end_time = time()
@@ -185,7 +191,9 @@ def gen_flashcards(
                     )
 
                     start_time = time()
-                    for res in send_to_model(flashcards_helper_model, ctx_window, images_notes):
+                    for res in send_to_model(
+                        flashcards_helper_model, ctx_window, images_notes
+                    ):
                         res_stream += res
                         yield res_stream
                     end_time = time()
@@ -208,7 +216,9 @@ def gen_flashcards(
                     )
 
                     start_time = time()
-                    for res in send_to_model(flashcards_helper_model, ctx_window, images_notes):
+                    for res in send_to_model(
+                        flashcards_helper_model, ctx_window, images_notes
+                    ):
                         res_stream += res
                         yield res_stream
                     end_time = time()
