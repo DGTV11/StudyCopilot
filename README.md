@@ -13,7 +13,7 @@ Study Copilot
 
 4) Cd into the StudyCopilot directory
 
-5) (optional) Get an ngrok account and set up ngrok (https://dashboard.ngrok.com/get-started/setup/macos)
+5) (optional) Get an ngrok account and set up ngrok (https://dashboard.ngrok.com/get-started/setup/)
 
 6) (optional) Get a free static domain
 
