@@ -39,7 +39,7 @@ def gen_flashcards(
                 "mistralai/Mistral-7B-Instruct-v0.2",
                 auth_token=CONFIG["huggingface_user_access_token"],
             )
-            ctx_window = 16384  # usually 32768 but reduced to lower RAM usage
+            ctx_window = 8192  # usually 32768 but reduced to lower RAM usage
         case "phi3":
             tokenizer = Tokenizer.from_pretrained(
                 "microsoft/Phi-3-mini-4k-instruct",
