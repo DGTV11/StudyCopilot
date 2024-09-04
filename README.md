@@ -27,9 +27,9 @@ pip install -r requirements.txt
 ngrok config add-authtoken [AUTH TOKEN]
 ```
 
-9) Pull the mistral, phi3, llava and nomic-embed-text models
+9) Pull the openhermes, phi3, llava and nomic-embed-text models
 ```sh
-ollama pull mistral
+ollama pull openhermes
 ollama pull phi3
 ollama pull llava-llama3
 ollama pull nomic-embed-text

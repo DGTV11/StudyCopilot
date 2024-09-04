@@ -1,4 +1,4 @@
-FROM mistral
+FROM openhermes
 SYSTEM """
 I want you to create search queries from the prompt.
 

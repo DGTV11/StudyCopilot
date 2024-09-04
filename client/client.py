@@ -55,7 +55,7 @@ if __name__ == "__main__":
                 generate_cards_btn = gr.Button(value="Generate Flashcards")
 
             flashcards_helper_model = gr.Dropdown(
-                ["phi3", "mistral"], label="Model:", value="phi3"
+                ["phi3", "openhermes"], label="Model:", value="phi3"
             )
             stop_flashcards_btn = gr.Button(value="Stop", variant="primary")
             out_cards = gr.Markdown(label="A deck of flashcards:")
@@ -71,7 +71,7 @@ if __name__ == "__main__":
                 online_mode_checkbox = gr.Checkbox(label="Search web?", value=True)
 
             study_chatbot_model = gr.Dropdown(
-                ["phi3", "mistral"], label="Model:", value="phi3"
+                ["phi3", "openhermes"], label="Model:", value="phi3"
             )
 
             with gr.Row():

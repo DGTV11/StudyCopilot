@@ -1,4 +1,4 @@
-FROM mistral
+FROM openhermes
 SYSTEM """
 You're given a list of moderation categories as below:
 - illegal: Illegal activity.

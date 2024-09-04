@@ -34,9 +34,9 @@ def gen_flashcards(
 ):
     gen_start_time = time()
     match flashcards_helper_model:
-        case "mistral":
-            tokenizer = Tokenizer.from_pretrained(
-                "mistralai/Mistral-7B-Instruct-v0.2",
+        case "openhermes":
+            tokenizer = AutoTokenizer.from_pretrained(
+                "teknium/OpenHermes-2.5-Mistral-7B",
                 auth_token=CONFIG["huggingface_user_access_token"],
             )
             ctx_window = 8192  # usually 32768 but reduced to lower RAM usage
