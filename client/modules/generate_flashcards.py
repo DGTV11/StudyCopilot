@@ -35,7 +35,7 @@ def gen_flashcards(
     gen_start_time = time()
     match flashcards_helper_model:
         case "openhermes":
-            tokenizer = AutoTokenizer.from_pretrained(
+            tokenizer = Tokenizer.from_pretrained(
                 "teknium/OpenHermes-2.5-Mistral-7B",
                 auth_token=CONFIG["huggingface_user_access_token"],
             )
