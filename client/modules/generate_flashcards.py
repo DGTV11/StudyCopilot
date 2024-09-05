@@ -101,7 +101,7 @@ def show_markdown(text):
 def send_to_model(flashcards_helper_model, ctx_window, text):
     stream = HOST.chat(
         model=flashcards_helper_model,
-        prompt=f"\nText: {text}\n\nThoughts:\n",
+        messages=INITIAL_CHAT_HISTORY + [{"role": "user", "content": text}],
         stream=True,
         options={"num_ctx": ctx_window},
     )
@@ -109,7 +109,7 @@ def send_to_model(flashcards_helper_model, ctx_window, text):
 
     log.log_info("Flashcard Generator", "Generating flashcards...")
     for chunk in stream:
-        yield chunk["response"]
+        yield chunk["message"]["response"]
 
 
 def gen_flashcards(
