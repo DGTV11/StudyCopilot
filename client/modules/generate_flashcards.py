@@ -109,7 +109,7 @@ def send_to_model(flashcards_helper_model, ctx_window, text):
 
     log.log_info("Flashcard Generator", "Generating flashcards...")
     for chunk in stream:
-        yield chunk["message"]["response"]
+        yield chunk["message"]["content"]
 
 
 def gen_flashcards(
