@@ -11,12 +11,13 @@ import modules.logging as log
 from modules.host import HOST
 from modules.config import CONFIG
 
-SYSTEM_PROMPT = """I want you to create a deck of flashcards from the text.
+SYSTEM_PROMPT = """I want you to create a deck of flashcards from the given text.
 The text can be very long and in different formats such as paragraphs, markdown, bulletpoints or a combination of them.
 
 Instructions to create a deck of flashcards:
 - Write your thought process before creating the flashcards.
 - Keep the flashcards simple, clear, and focused on the most important information.
+- Make sure that the flashcards cover all of the important content of the given text.
 - Make sure the questions are specific and unambiguous.
 - Use simple and direct language to make the cards easy to read and understand.
 - Answers should contain only a single key fact/name/concept/term.
