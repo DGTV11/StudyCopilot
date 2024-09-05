@@ -4,21 +4,104 @@ from time import time
 import gradio as gr
 from pptx import Presentation
 from semantic_text_splitter import TextSplitter
-from tokenizers import Tokenizer
+# from tokenizers import Tokenizer
+from transformers import AutoTokenizer
 
 import modules.logging as log
 from modules.host import HOST
 from modules.config import CONFIG
 
+SYSTEM_PROMPT = """I want you to create a deck of flashcards from the text.
+The text can be very long and in different formats such as paragraphs, markdown, bulletpoints or a combination of them.
+
+Instructions to create a deck of flashcards:
+- Keep the flashcards simple, clear, and focused on the most important information.
+- Make sure the questions are specific and unambiguous.
+- Use simple and direct language to make the cards easy to read and understand.
+- Answers should contain only a single key fact/name/concept/term.
+- Make only one deck of flashcards; do not make extra sets of texts and decks of flashcards on your own.
+
+Let's do it step by step when creating a deck of flashcards:
+1. Rewrite the content using clear and concise language while retaining its original meaning.
+2. Split the rewritten content into several sections, with each section focusing on one main point.
+3. Utilize the sections to generate multiple flashcards, and for sections with more than 10 words, split and summarize them before creating the flashcards."""
+
+EXAMPLE_PROMPT = "The characteristics of the Dead Sea: Salt lake located on the border between Israel and Jordan. Its shoreline is the lowest point on the Earth's surface, averaging 396 m below sea level. It is 74 km long. It is seven times as salty (30% by volume) as the ocean. Its density keeps swimmers afloat. Only simple organisms can live in its saline waters."
+
+EXAMPLE_RESPONSE = """# THOUGHT PROCESS
+To create the flashcards for the characteristics of the Dead Sea, I will follow these steps:
+
+1. **Rewrite the content using clear and concise language:**
+   - The Dead Sea is a salt lake located between Israel and Jordan.
+   - Its shoreline is the lowest point on Earth's surface, averaging 396 meters below sea level.
+   - The Dead Sea is 74 kilometers long.
+   - It is seven times saltier than the ocean, with a salt concentration of 30% by volume.
+   - The high density of the water keeps swimmers afloat.
+   - Only simple organisms can survive in its saline waters.
+
+2. **Split the rewritten content into several sections:**
+   - Location and geographical context
+   - Shoreline characteristics
+   - Length of the Dead Sea
+   - Salinity compared to the ocean
+   - Density and buoyancy
+   - Organisms living in the Dead Sea
+
+3. **Utilize the sections to generate flashcards:**
+
+   - **Location and geographical context:**
+     - Where is the Dead Sea located? (Answer: on the border between Israel and Jordan)
+     - What is the lowest point on the Earth's surface? (Answer: The Dead Sea shoreline)
+
+   - **Shoreline characteristics:**
+     - What is the average level on which the Dead Sea is located? (Answer: 396 meters below sea level)
+
+   - **Length of the Dead Sea:**
+     - How long is the Dead Sea? (Answer: 74 km)
+
+   - **Salinity compared to the ocean:**
+     - How much saltier is the Dead Sea compared with the oceans? (Answer: 7 times)
+     - What is the volume content of salt in the Dead Sea? (Answer: 30%)
+
+   - **Density and buoyancy:**
+     - Why can the Dead Sea keep swimmers afloat? (Answer: due to high salt content)
+
+   - **Organisms living in the Dead Sea:**
+     - Why is the Dead Sea called Dead? (Answer: because only simple organisms can live in it)
+     - Why only simple organisms can live in the Dead Sea? (Answer: because of high salt content)
+
+I will now generate the deck of flashcards based on the generated thought process.
+
+---
+
+# A deck of flashcards
+|Question|Answer|
+|---|---|
+|Where is the Dead Sea located?|on the border between Israel and Jordan|
+|What is the lowest point on the Earth's surface?|The Dead Sea shoreline|
+|What is the average level on which the Dead Sea is located?|396 meters (below sea level)|
+|How long is the Dead Sea?|74 km|
+|How much saltier is the Dead Sea as compared with the oceans?|7 times|
+|What is the volume content of salt in the Dead Sea?|30%|
+|Why can the Dead Sea keep swimmers afloat?|due to high salt content|
+|Why is the Dead Sea called Dead?|because only simple organisms can live in it|
+|Why only simple organisms can live in the Dead Sea?|because of high salt content|
+"""
+
+INITIAL_CHAT_HISTORY = [
+    {"role": "system", "content": SYSTEM_PROMPT},
+    {"role": "user", "content": EXAMPLE_PROMPT},
+    {"role": "assistant", "content": EXAMPLE_RESPONSE}
+]
 
 def show_markdown(text):
     return text if text.startswith("```") and text.endswith("```") else "```" + text
 
 
 def send_to_model(flashcards_helper_model, ctx_window, text):
-    stream = HOST.generate(
-        model=f"flashcards_helper_{flashcards_helper_model}",
-        prompt=f"\nText: {text}\n\nA deck of flashcards:\n",
+    stream = HOST.chat(
+        model=flashcards_helper_model,
+        prompt=f"\nText: {text}\n\nThoughts:\n",
         stream=True,
         options={"num_ctx": ctx_window},
     )
@@ -35,16 +118,16 @@ def gen_flashcards(
     gen_start_time = time()
     match flashcards_helper_model:
         case "openhermes":
-            tokenizer = Tokenizer.from_pretrained(
+            tokenizer = AutoTokenizer.from_pretrained(
                 "teknium/OpenHermes-2.5-Mistral-7B",
-                auth_token=CONFIG["huggingface_user_access_token"],
-            )
-            ctx_window = 8192  # usually 32768 but reduced to lower RAM usage
+                atoken=CONFIG["huggingface_user_access_token"],
+            )._tokenizer
+            ctx_window = 4096
         case "phi3":
-            tokenizer = Tokenizer.from_pretrained(
+            tokenizer = AutoTokenizer.from_pretrained(
                 "microsoft/Phi-3-mini-4k-instruct",
-                auth_token=CONFIG["huggingface_user_access_token"],
-            )
+                token=CONFIG["huggingface_user_access_token"],
+            )._tokenizer
             ctx_window = 4096
         case _:
             raise gr.Error(f"{flashcards_helper_model} is not a supported model.")
