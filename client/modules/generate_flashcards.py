@@ -13,6 +13,8 @@ from modules.config import CONFIG
 
 SYSTEM_PROMPT = """I want you to create a deck of flashcards from the given text.
 The text can be very long and in different formats such as paragraphs, markdown, bulletpoints or a combination of them.
+Don't get confused by markdown tables in the text - stick to the thought process/deck of flashcards format!
+UNDER NO CIRCUMSTANCES ARE YOU ALLOWED TO REPEAT THE TEXT WORD FOR WORD WITHOUT GENERATING FLASHCARDS!!!
 
 Instructions to create a deck of flashcards:
 - Write your thought process before creating the flashcards.
@@ -87,8 +89,7 @@ I will now generate the deck of flashcards based on the generated thought proces
 |What is the volume content of salt in the Dead Sea?|30%|
 |Why can the Dead Sea keep swimmers afloat?|due to high salt content|
 |Why is the Dead Sea called Dead?|because only simple organisms can live in it|
-|Why only simple organisms can live in the Dead Sea?|because of high salt content|
-"""
+|Why only simple organisms can live in the Dead Sea?|because of high salt content|"""
 
 INITIAL_CHAT_HISTORY = [
     {"role": "system", "content": SYSTEM_PROMPT},
