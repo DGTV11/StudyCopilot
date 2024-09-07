@@ -15,6 +15,7 @@ SYSTEM_PROMPT = """I want you to create a deck of flashcards from the given text
 The text can be very long and in different formats such as paragraphs, markdown, bulletpoints or a combination of them.
 Don't get confused by markdown tables in the text - stick to the thought process/deck of flashcards format!
 UNDER NO CIRCUMSTANCES ARE YOU ALLOWED TO REPEAT THE TEXT WORD FOR WORD WITHOUT GENERATING FLASHCARDS!!!
+ALWAYS write your thought process down BEFORE generating your flashcards.
 
 Instructions to create a deck of flashcards:
 - Write your thought process before creating the flashcards.
